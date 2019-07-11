@@ -23,13 +23,22 @@ url: "http://gdgdhori.github.io" # the base hostname & protocol for your site, e
 #github_username:  jekyll
 
 # Build settings
-markdown: kramdown
+#markdown: kramdown
+markdown: redcarpet
+redcarpet:
+  extensions: [
+    "no_intra_emphasis",
+    "fenced_code_blocks",
+    "autolink",
+    "tables",
+    "footnotes",
+    "strikethrough",
+    "lax_html_blocks"
+  ]
+
 theme: jekyll-theme-minimal
 plugins:
   - jekyll-feed
-redcarpet:
-   extensions: ["tables"]
-
 
 permalink: /categories/:short_year-:month-:day/:title
 
