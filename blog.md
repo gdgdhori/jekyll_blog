@@ -8,7 +8,7 @@ title: Blog
   {% for post in site.posts %}
     <li>
       <h2><a href="{{ post.url | relative_url }}">
-	  {{ post.date | date: '%y/%m/%d' }}:{{ post.title }}
+	  {{ post.date | date: '%Y/%m/%d(%a)' }} : {{ post.title }}
       </a></h2>
       <p>{{ post.excerpt }}</p>
     </li>
