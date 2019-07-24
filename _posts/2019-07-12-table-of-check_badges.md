@@ -5,7 +5,8 @@ Member of lab : A, B, C, D
  | 6/25 : commandline by Thor  | ○| ×| ×| ○|
  | 7/1 : install jekyll and change org-mode to jekyll | ○| ×| ×| ○|
  | 7/8 : about check_badges  | ○|○|× | [×](https://qiita.com/daddygongon/items/d803d9ce6d75bef3179a)|
- 
+
+![キャプション]({{site.baseurl}}/img/sample.png)
  
  Question
 - conv_md_and_storeをすると.orgファイルではテーブル表示されていたが.mdファイルでは何故か"\|"が消されて変換されるためテーブル表示されない
