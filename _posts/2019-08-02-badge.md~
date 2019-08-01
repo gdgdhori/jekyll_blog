@@ -1,0 +1,11 @@
+|      | 6/25 | 7/1 | 7/8 | 7/15 |
+|------+------+-----+-----+------|
+| 佐藤 |[![badge]({{site.baseurl}}/img/blog-commndline by Thor-green.svg)](https://gdgdhori.github.io/jekyll_blog/categories/19-06-25/about-making-commandline-by-Thor)      |[![badge]({{site.baseurl}}/img/org--mode to jekyll-green.svg)](https://gdgdhori.github.io/jekyll_blog/categories/19-07-03/install-jekyll)     |[![badge]({{site.baseurl}}/img/blog-about check__badges-green.svg)](https://gdgdhori.github.io/jekyll_blog/categories/19-07-11/about-chech_badges)     |      |
+| 鈴木 |absent      |[![badge]({{site.baseurl}}/img/org--mode to jekyll-green.svg)](https://gdgdhori.github.io/jekyll_blog/categories/19-07-03/install-jekyll)     |![badge]({{site.baseurl}}/img/blog-about check__badges-red.svg)     |      |
+| 高橋 |absent      |[![badge]({{site.baseurl}}/img/org--mode to jekyll-green.svg)](https://gdgdhori.github.io/jekyll_blog/categories/19-07-03/install-jekyll)     |absent     |      |
+| 田中 |absent      |[![badge]({{site.baseurl}}/img/org--mode to jekyll-green.svg)](https://gdgdhori.github.io/jekyll_blog/categories/19-07-03/install-jekyll)     |absent     |      |
+
+about badge
+- ゼミに参加していたらバッジを，欠席していた場合「absent」など記入して分かるように
+  - またその参加した日に記入したblogのリンクをバッジからとべるようにしバッジを緑，参加したがblogが書けていない状態なら赤
+  

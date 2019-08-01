@@ -1,0 +1,1 @@
+https://img.shields.io/badge/aaa-bbb-red.svg?style=plastic&logo=appveyor
