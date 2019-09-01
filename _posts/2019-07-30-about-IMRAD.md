@@ -15,3 +15,5 @@ methods, Results, and Discussion)が望ましい． 序論（Introduction）
 結論（Conclusion）
 
 -   序論で取り上げた問題に関し、その研究から得られた主要な結論を述べる．
+
+まとめ 参照論文 番号が対応するように書式を守って書く．
