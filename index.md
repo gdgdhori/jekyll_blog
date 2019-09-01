@@ -3,7 +3,7 @@ tutor's color:
 
 
 |バッジ|7/17|7/19|7/30|8/1|
-|nakahori|miss|![badge](https://img.shields.io/badge/7/19-check_badge-red.svg)|miss|![badge](https://img.shields.io/badge/8/1-Thor-red.svg)|
+|nakahori|miss|![badge](https://img.shields.io/badge/7/19-check_badge-red.svg)|miss|![badge](https://img.shields.io/badge/8/1-Thor-orange.svg)|
 |okabata|![badge](https://img.shields.io/badge/7/17-check_badge-green.svg)|miss|miss|miss|
-|omri|miss|miss|![badge](https://img.shields.io/badge/7/30-check_badge-red.svg)|![badge](https://img.shields.io/badge/8/1-Thor-green.svg)|
-|yamaguchi|miss|![badge](https://img.shields.io/badge/7/19-check_badge-red.svg)|miss|miss|
+|omri|miss|miss|![badge](https://img.shields.io/badge/7/30-check_badge-red.svg)|![badge](https://img.shields.io/badge/8/1-Thor-lightgray.svg)|
+|yamaguchi|miss|![badge](https://img.shields.io/badge/7/19-check_badge-yellow.svg)|miss|miss|
