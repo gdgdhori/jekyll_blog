@@ -6,7 +6,7 @@ tutor's color:
 |ikeda|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)|![badge](https://img.shields.io/badge/7/5-IMRAD-red.svg)|
 |kawai|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)|![badge](https://img.shields.io/badge/7/5-IMRAD-red.svg)|
 |kono|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)|![badge](https://img.shields.io/badge/7/5-IMRAD-green.svg)|
-|nakahori|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)|miss|
+|nakahori|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)![badge](https://img.shields.io/badge/7/3-Jekyll-red.svg)|miss|
 |nichiyama|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)|![badge](https://img.shields.io/badge/7/5-IMRAD-green.svg)|
 |okabata|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)|![badge](https://img.shields.io/badge/7/5-IMRAD-red.svg)|
 |okamoto|![badge](https://img.shields.io/badge/7/1-Ruby-green.svg)|![badge](https://img.shields.io/badge/7/3-TDD-green.svg)|![badge](https://img.shields.io/badge/7/5-IMRAD-red.svg)|
