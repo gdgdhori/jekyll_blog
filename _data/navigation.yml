@@ -3,6 +3,6 @@
 - name: about
   link: /about.html
 - name: blog
-  link: /blog.html  
-- name: Oshibori
-  link: /oshi.html
+  link: /blog.html
+- name: text
+  link: /text.html
