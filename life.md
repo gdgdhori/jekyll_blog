@@ -1,1 +1,1 @@
-nakak
+![png](./png/piechart_nakahori.png)
