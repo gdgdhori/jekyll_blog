@@ -1,0 +1,206 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: チャート式Ruby class[1] puts
+#+AUTHOR: Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:t num:2
+
+#+SETUPFILE: /Users/bob/.emacs.d/org-mode/theme-readtheorg.setup
+
+* イントロ
+** 目的
+shell, emacs, rubyを一度に覚えてもらいます．
+rubyという言語がshellという環境でどれだけ有益かを実感してもらうためです．
+また，emacsとshellのkey bindingの統一性を知ることで，
+達人プログラマの作業効率がなぜ良いかをわかってもらうためです．
+
+** 作業手順
+このテキストの構成は
+- お題
+- 簡単な解説
+- 詳しい解法
+- 類題
+となっています．
+それぞれの記述に従って作業を進めれば，その内容が理解できるはずです．
+
+ここで，忘れないための工夫をしてください．
+- 参照しやすいように同じ構成
+- 題目に内容をわかりやく説明した文言をつける
+- 詳しい解法はくどいかもしれませんが，テスト駆動を意識しています
+- 自分で作った回答をincludeして自分のできを評価してください
+- わからない内容や単語は自分で調べてテキストに書き加えるようにしてください．
+- 翌週にformatして出力しましょう．それで独自のテキストが出来上がります．
+
+** 内容のformatについて
+このテキストでは，shellでの入力とsource codeをemacsとかで打ち込むのを区別しています．
+#+begin_example
+> cat hello.rb
+#+end_example
+こういう感じで，command prompt(>)をつけているのはshell入力を意図しています．
+その出力は普通plain textですが，
+#+begin_src ruby
+puts "Hello world."
+#+end_src
+という感じで，rubyのsource codeみたいに出力させています．
+
+* puts hello_world
+** お題
+まずはhello_worldですね．
+#+begin_example
+Hello world.
+#+end_example
+と打ち出すプログラムを作ります．
+** 解説
+rubyでStringsを打ち出すのにはいくつかの方法があります．
+どれを使ってもいいですし，rubyistは状況に応じて全てを使います．
+| method | 使用状況                                |
+|--------+-----------------------------------------|
+| print  | 普通に使う．要改行                      |
+| puts   | 次に普通に使う. 自動改行                |
+| p      | codingの最中にdebugがわりに打ち出すとき |
+| pp     | pのpretty print, require 'pp'が必要     |
+| printf | cのがあります．formatを整えるときに便利 |
+そのほかにもいくつもありますが，まずはこれを覚えましょう．
+
+Stringはシングルコーテーション'で囲うのと，
+ダブルで囲うのの二種類があります．
+シングルは中身をいじらないとき，ダブル"はちょこちょこいじるときです．
+これは後で見て行きます．
+
+** 詳しい解法
+まずはシングルで囲って，
+#+begin_src ruby
+puts 'hello world'
+#+end_src
+を試しましょう．
+#+begin_example
+> mkdir codes
+> cd codes
+> emacs puts_hello_world.rb
+#+end_example
+としてemacsを開いてcodeを打ち込んでください．c-x c-sでsaveしたらc-zで一時中断して，
+#+begin_example
+> ruby puts_hello_world.rb
+#+end_example
+として走らせて見てください．動いた？
+
+#+caption: puts_hello_world.rb
+#+include: "./codes/puts_hello_world.rb"
+
+** 類題
+pとかprintとかも試して見てください．
+違いを観察して，#でコメントをつけて
+p_print_hello_world.rbに書きなさい．
+#+caption: p_print_hello_world.rb
+#+include: "./codes/p_print_hello_world.rb"
+
+* getsなんだけど，ARGV[0]で行きます！
+** お題
+#+begin_example
+> ruby hello_name.rb Rudy
+#+end_example
+と打ち込んだ時に，
+#+begin_example
+Hello Rudy.
+#+end_example
+と返ってくるcodeを書け．
+** 簡単な解説
+putsしたら普通はgetsなんですが，目的の一つであるshell環境では
+command line interfaceで作業をするために
+ARGV[0]というのを使って行きます．
+#+begin_src ruby
+puts ARGV[0]
+#+end_src
+とhello_name.rbに打ち込んで，
+#+begin_example
+> ruby hello_name.rb Rudy
+#+end_example
+としてください．どうよ? うちの愛犬の名前は出たやろか？
+#+caption: hello_name.rb
+#+include: "./codes/hello_name.rb"
+
+ARGV[0]というのは引数(argument)配列の0番目を意味しています．
+unix shell上ではcommandにoptionなんかの引数を直接渡すのが普通です．
+そのためにARGVというのは普通に用意されています．
+
+次に"Hello Rudy."と打ち出させることをかんがえます．これをするにはいくつかの方法があります．
+これもいろいろ試して見てください．
+
+| puts  | puts "Hello " + ARGV[0]         |
+| puts  | puts "Hello #{ARGV[0]}"         |
+| print | print "Hello #{ARGV[0]}\n"      |
+| print | print "Hello " + ARGV[0] + "\n" |
+
+Cからの人は，printfもありです．
+#+begin_src ruby
+printf("Hello %s.\n", ARGV[0])
+#+end_src
+でも慣れてくると冗長なんで使わなくなります．
+多分使うのは，数値計算の出力formatを揃えたいときぐらいでしょうね．
+
+** 詳しい解法
+まずは動作させて見ます．
+#+begin_example
+> ruby hello_name.rb Rudy
+Rudy
+#+end_example
+って返ってます？　これを変更します．
+#+begin_example
+> ps
+#+end_example
+でemacsが今どういう状態かを確認して，fgあるいはemacs hell_name.rbで
+起動します．
+#+begin_src ruby
+puts "Hello #{ARGV[0]}"
+#+end_src
+がこういう状況ではよく使われます．
+ちゃんとでています？
+
+** 類題
+次に"Hello Rudy."というのをどこかへ保存することを考えます．
+: ruby hello_name.rb bob > hello_name.txt
+としてhello_name.txtに自分への挨拶を出力させて見てください．
+#+include: "./codes/hello_name.txt"
+: Hello bob.
+とかね．
+'>'は，出力先を指定したtxtに変更(re-direct)するshellの機能です．
+
+: cat hello_name.txt
+で中身をcat(con-cat-inate)できます．
+
+* ここで習った項目
+- ruby
+  - puts, print, p, pp
+  - ARGV[0]
+- emacs
+  - C-z, C-x C-s, C-x C-c
+  - ps : process status
+  - fg : 一度中断したprocessを再度起動させる
+- shell 
+  - mkdir, cd
+  - cat
+  - redirection(>)
+
+* 補足
+
+** powershellでgitを使う
+以下でできそうです．試して見てください．
+https://qiita.com/kerobot/items/78372640127771f92ee0
+でも，rubyとかemacsとかは動かないか．．．
+sayも通らない．
+
+** org_format
+みたいなのないかな．
+例えば，f.printするときに自動で，
+#+begin_src ruby
+#+begin_example
+
+#+end_example
+#+end_src
+をつけてくれる．とか．．．
+
+
+
+
+

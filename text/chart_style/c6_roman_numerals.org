@@ -1,0 +1,51 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: テスト駆動でroman numerals
+#+AUTHOR: 西谷滋人
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:t num:2
+
+#+SETUPFILE: ~/.emacs.d/org-mode/theme-readtheorg.setup
+
+* お題
+アラビア数字(arabic numerals)を受け取って，
+ローマ数字(roman numerals)を返すmethodを書きなさい．
+
+* ローマ数字で使われる文字
+| arabic numerals | roman numerals |
+|               1 | I              |
+|               5 | V              |
+|              10 | X              |
+|              50 | L              |
+|             100 | C              |
+|             500 | D              |
+|            1000 | M              |
+
+* 例
+| arabic numerals | roman numerals |
+|               1 | I              |
+|               2 | II             |
+|               4 | IV             |
+|               5 | V              |
+|               6 | VI             |
+|               9 | IX             |
+|              10 | X              |
+|              11 | XI             |
+|              14 | XIV            |
+|              15 | XV             |
+|              19 | XIX            |
+|              38 | XXXVIII        |
+|              42 | XLII           |
+|              49 | XLIX           |
+|              51 | LI             |
+|              97 | XCVII          |
+|              99 | XCIX           |
+|             439 | CDXXXIX        |
+|             483 | CDLXXXIII      |
+|             499 | CDXCIX         |
+|             732 | DCCXXXII       |
+|             961 | CMLXI          |
+|             999 | CMXCIX         |
+|            1999 |                |
+

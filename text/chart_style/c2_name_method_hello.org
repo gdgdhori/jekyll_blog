@@ -1,0 +1,273 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: チャート式Ruby class[2] variable and method
+#+AUTHOR: Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:t num:2
+
+#+SETUPFILE: ~/.emacs.d/org-mode/theme-readtheorg.setup
+
+* variable
+** お題
+受け取った引数ARGV[0]をnameという変数(variable)に代入して
+それを打ち出すcodeを書け．
+#+begin_example
+> ruby name_variable.rb Rudy
+Rudy
+#+end_example
+
+** 簡単な解説
+rubyの変数は型宣言の必要性がありません．
+文脈に合わせて適当に型が定められます．
+イコールで代入されます．
+#+begin_src ruby
+name = 'Rudy'
+#+end_src
+なんかです．
+
+** 詳しい解法
+#+begin_example
+> ruby name_variable.rb Rudy
+#+end_example
+としましょう．
+#+begin_example
+ruby: No such file or directory -- name_variable.rb (LoadError)
+#+end_example
+というエラーが返ってきますよね．そんなファイルないよって．
+なら作ります．
+#+begin_example
+> emacs name_variable.rb
+#+end_example
+としてemacsを起動して
+#+begin_src ruby
+p "Rudy"
+#+end_src
+と打ち込んでsaveしましょう．
+#+begin_example
+> ruby name_variable.rb Rudy
+"Rudy"
+#+end_example
+　
+** 類題
+さてこの後，
+- nameに代入してRudyと打ち出すようにrefactoringしてください．
+- ARGV[0]を受け取って，自分の名前を返すようにrefactoringしてください
+#+caption: name_variable.rb
+#+include: "./codes/name_variable.rb"
+* method
+** お題
+#+begin_example
+> ruby hello_method.rb Rudy
+Hell Rudy.
+#+end_example
+と返すhello methodを作りなさい．
+** 解説
+Rubyではfunctionやprocedureなどのまとまりはmethodを定義(definition)することになります．
+methodは0個以上の引数(argument)を取ることができます．
+例えば次の通りです．
+#+begin_src ruby
+def hello(name)
+  p name
+end
+#+end_src
+
+** 解法
+#+begin_example
+> ruby hello_method.rb Rudy
+#+end_example
+として見ましょう．もちろん動きませんよね．
+emacsでhello_method.rbを編集します．
+#+begin_example
+> emacs hello_method.rb
+#+end_example
+何ですが，methodの中身ではなく呼び出す方から考えます．
+普通に，
+#+begin_src ruby
+hello(name)
+#+end_src
+と打ち込んで動かして見てください．
+#+begin_example
+> ruby hello_method.rb Rudy
+hello_method.rb:1:in `<main>': undefined local variable or method `name' for main:Object (NameError)
+#+end_example
+というエラーが返ってきたはずです．nameという変数やmethodがundefineやと怒られています．
+そこで今まで学んできたのを思い出して，
+nameにARGV[0]を代入します．
+#+begin_src ruby
+name = ARGV[0]
+hello(name)
+#+end_src
+次のerrorは
+#+begin_example
+> ruby hello_method.rb Rudy
+hello_method.rb:2:in `<main>': undefined method `hello' for main:Object (NoMethodError)
+#+end_example
+でhelloっていうmethodがないよですね．
+
+** 類題
+先の解法を参照してhello メソッドを完成させてください．
+#+caption: hello_method.rb
+#+include: "./codes/hello_method.rb"
+* ここで学んだこと
++ ruby
+  + variable
+  + method
+  + argument
+* TDD
+** codingの最終目標
+こういうcodingの仕方はTDD(Test Driven Development:テスト駆動開発)
+と呼ばれています．
+
+- テストを作る
+- エラーを出す(red)
+- エラーをなくす(green)
+- codeを綺麗にする(refactoring)
+です．codingの最終目標は
+: clean code that works
+動く綺麗なコードを作ることです．
+順番は，まず動かして，それからこそこそと綺麗にするです．
+えっと，もし，あなたが，
+- codeを書くまえに設計すべき
+- コピペは悪
+なんていう，マントラを信じているなら
+このprogramming styleを提唱し始めたKent Beckの文章を
+載せておきます．よーーく心に刻んでください．
+
+もしあなたがプログラミング嫌いならば，
+少し心が晴れると思いますよ．俺のせいじゃないって．
+
+** clean code that works
+TDD by Example (Kent Beck) p.13
+#+begin_quote
+目指すのは，動作するきれいなコードだ
+(このRon Jeffriesの簡潔な表現は素晴らしい).
+動作するきれいなコードは，偉大なプログラマでも
+すぐには書けないことがあるし，
+普通のプログラマならなおさらだ(私もそうだ)．
+==ここは分割統治しよう．==
+各個撃破だぜ，ベイビー.
+最初に「動作する」に取り組み，
+その後で「きれいな」に取り組む．
+この方法はアーキテクチャ駆動とは正反対だ．
+アーキテクチャ駆動は「きれいなコード」に最初に取り組み，
+そのうえで苦心してあちこち設計の辻褄を
+合わせながらどうにか「動作する」を実現させる．
+#+end_quote
+
+TDD by Example (Kent Beck) p.11
+#+begin_quote
+The goal is clean code that works
+(thenks to Ron Jeffries for this pithy summary).
+Clean code that works is out of the reach of even the best programmers
+some of the time,
+and out of the reach of most programmers(like me)
+most of the time.
+Divide and conquer, baby.
+First we'll solve the "that works" part of the problem.
+Then we'll solve the "clean code" part.
+This is the opposite of architecture-driven development,
+where you solve "clean code" first,
+then scramble around trying to integrate into the design the things you learn 
+as you solve the "that works" problem.
+#+end_quote
+** phases and speed
+TDD by Example (Kent Beck) p.30
+#+begin_quote
+グリーンバーを出す小さなステップはどんなものだろうか．
+Dollarクラスを丸ごとコピーして，
+DollarをFrancに書き換えるのはどうだろう．
+
+ちょっと待った．
+これで唾棄すべき糞コードの出来上がりだと
+あざ笑う声が聞こえる．
+その声は続けて言う．
+コピー&ペーストによる再利用は
+抽象化の敗北であり，きれいな設計を殺すと．
+
+イラっとしただろうか．なら深呼吸だ．
+鼻から息を吸い込んで，3秒止めて口から吐き出す．
+オーケー？
+さて，サイクルにはフェーズがあることを思い出してほしい
+(中には数秒で通り過ぎるものもあるが，フェーズはフェーズだ)．
+1. テストを書く．
+1. コンパイラを通す．
+1. テストを走らせ，失敗を確認する．
+1. テストを通す．
+1. 重複を排除する．
+
+
+各フェーズにはフェーズなりの目的と解決法があり，
+価値観も異なっている．
+最初の３つのフェーズはなるべく速く通過して，
+新しい機能がどの状態にあるのかわかるところまで行きたい．
+そこにたどり着くためには，どのような罪をおかしてもよい．
+その短い時間だけは，速度が設計よりも重要だからだ．
+
+１つ心配なのは，私がここに書いていることが，
+良い設計の原則を無視してよいという免罪符になってしまうことだ．
+チームに対して
+「Kent Beckが設計なんてどうでもいいって書いてたよ」
+などと言い始めるのは，ちょっと待ってほしい．
+サイクルはまだ終わっていない．
+4つ足のアーロンチェアは倒れる．
+最初の4つのステップは，5つ目がなければ無意味だ．
+正しい設計を，正しいタイミングで行う．
+動かしてから，正しくする．
+
+ここまで言っておけば安心だろう．
+これで読者の皆さんは重複を排除するまで
+誰にもコードを見せないはずだ
+(ただし，ペアプロ相手は除く)
+#+end_quote
+
+TDD by Example (Kent Beck) p.23
+#+begin_quote
+What short step will get us to a green bar?
+Copying the Dollar code and replacing Dollar with Franc.
+
+Stop.  Hold on.
+I can hear the aesthetically inclined among you sneering and spitting.
+Copy-and-paste reuse?
+The death of abstraction?
+The killer of clean design?
+
+If you're upset, take a cleanthing breath.
+In through the nose ... 
+hold it 1, 2, 3... out through the mouth.
+There. Remember, our cycle has different phases
+(they go by quickly, often in seconds, but they are phases.):
+1. Write a test.
+  2. Make it compile.
+  3. Run it to see that it fails.
+4. Make it run.
+5. Remove duplication.
+  (Make it right.)
+
+The different phases have different purposes.
+They call for different styles of solution, different aesthetic viewpoints.
+The first three phases need to go by quickly,
+so we get to a known state with the new functionality.
+We can commit any number of sins to get there,
+because speed trumps design,
+just for that brief moment.
+
+Now I'm worried.
+I've given you a license to abandon all the principles of good design.
+Off you go to your teams --
+"Kent says all that design stuff doesn't matter."
+Halt.  The cycle is not complete.
+A four-legged Aeron chair falls over.
+The first four steps of the cycle won't work without the fifth.
+Good design at good times.
+Make it run, make it right.
+
+There, I feel better.
+Now I'm sure you won't show anyone except your partner your code
+until you've removed the duplication.
+Where were we?
+Ah, yes.
+Violating all the tenets of good design in the interest of speed
+(penance for our sin will occupy the next several chapters).
+
+#+end_quote

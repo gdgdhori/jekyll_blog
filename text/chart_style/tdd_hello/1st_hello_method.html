@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="jp" xml:lang="jp">
+<head>
+<!-- 2019-10-07 月 11:24 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>first lesson for ruby novice &#x2013; hello method --</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Shigeto R. Nishitani" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/readtheorg/js/readtheorg.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">first lesson for ruby novice &#x2013; hello method --</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org8fdb748">1. coding原則に対する基本的見解</a></li>
+<li><a href="#org7b5d826">2. 場所の記憶と自然言語</a></li>
+<li><a href="#orgf1503e1">3. hello world</a></li>
+<li><a href="#org7f4b1a9">4. 振る舞いを持たす</a></li>
+<li><a href="#orgd3785b6">5. 言語は英語から</a></li>
+<li><a href="#orgfab14b3">6. 長くなったら，隠せ</a></li>
+<li><a href="#org4b71e29">7. 今日の教え=1=- red green refactoring -</a></li>
+<li><a href="#org4b7f16b">8. 今日の教え=2=- editor -</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8fdb748" class="outline-2">
+<h2 id="org8fdb748"><span class="section-number-2">1</span> coding原則に対する基本的見解</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+いくつかの言語でcodingしてきて，rubyが本当にすんなり腑に落ちているのですが，
+なぜかを考えるとよくわかりませんでした．この頃気がついたことがあるので，
+それに従ったrubyの学習を進めて見ます．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7b5d826" class="outline-2">
+<h2 id="org7b5d826"><span class="section-number-2">2</span> 場所の記憶と自然言語</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+筆者は記憶がすごく苦手です．人の名前とか，電話番号とかほとんど覚えていません．
+昔は，「画像記憶が得意やからいいやん」とか思ってたんですが，人の顔の見分けも
+つかんようになってきたんで，これもダメみたいです．
+</p>
+
+<p>
+で，残ったのは何かというと
+　「場所の記憶と自然言語」
+です．webだとどこのボタンをクリックして，とかこの画面の右上の方とか覚えてますよね．
+あるいは，英単語は比較的覚えています．
+</p>
+
+<p>
+Actaってのがありました．outlinerの走りなんですが，そこで発明されたのが，
+toggle表示(folding, hide)です．それまではMac OSがGUIの走りのはずで
+そのデフォルトはアイコンでした．それがいつの間にかtoggle表示が当たり前に
+なったんですが，そのメタファがプログラミングでも実践されていて．．．
+さらにemacsのorg-modeなんかになるとそれが徹底されてきています．
+</p>
+
+<p>
+そこでさらにmy_helpが私の中では最新なんですが，それはまた別の話．
+まずはtoggleがどうcodingに効くかというところから進めていきます．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf1503e1" class="outline-2">
+<h2 id="orgf1503e1"><span class="section-number-2">3</span> hello world</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+まずはお決まりからいきましょう．hello worldです．
+</p>
+
+<pre class="example">
+&gt; emacs hello.rb
+
+</pre>
+
+<p>
+でeditorを起動して，次のcode
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span class="linenr">1: </span>puts <span style="font-style: italic;">"Hello world."</span>
+</pre>
+</div>
+
+<p>
+を打ち込んで保存しましょう(C-x C-s, C-z)．動かしてみると
+</p>
+
+<pre class="example">
+&gt; ruby hello.rb
+
+</pre>
+
+<p>
+ちゃんと動いています？　codeを書いていくコツは「チラ見」です．
+一行書いたら動かしてみるという癖をつけましょう．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7f4b1a9" class="outline-2">
+<h2 id="org7f4b1a9"><span class="section-number-2">4</span> 振る舞いを持たす</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+もう少し，このアプリに振る舞いを追加しましょう．
+対話的するために，先ほどの命令の後ろに引数をつけて，
+名前を返しくれると嬉しいでしょ？
+</p>
+
+<pre class="example">
+&gt; ruby hello.rb bob
+Hello bob.  Nice to see you.
+</pre>
+<p>
+なんてね．
+</p>
+
+<p>
+これを実装すると
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span class="linenr">2: </span>puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{ARGV[0]}</span><span style="font-style: italic;">."</span>
+</pre>
+</div>
+<p>
+になります．そうこれでいいんですが，もう少し高尚な感じで．．．
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span class="linenr">3: </span>tmp1 = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0]
+<span class="linenr">4: </span>puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{tmp1}</span><span style="font-style: italic;">."</span>
+</pre>
+</div>
+<p>
+とでもしましょう．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd3785b6" class="outline-2">
+<h2 id="orgd3785b6"><span class="section-number-2">5</span> 言語は英語から</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+これをmethodにしたら，
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">func</span>(hoge)
+  puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{hoge}</span><span style="font-style: italic;">."</span>
+<span style="font-weight: bold;">end</span>
+
+hoho = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0]
+func(hoho)
+</pre>
+</div>
+
+<p>
+これを動かしてみましょう．
+</p>
+
+<pre class="example">
+&gt; ruby hello.rb bob
+
+</pre>
+
+<p>
+とちゃんと動きます．これでは何をしているのかわからないので，
+コメントをつけましょう．
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">method: func</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">input:  hoge is a name</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">output: puts greetings</span>
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">return: nil</span>
+<span style="font-weight: bold;">def</span> <span style="font-weight: bold;">func</span>(hoge)
+  puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{hoge}</span><span style="font-style: italic;">."</span>
+<span style="font-weight: bold;">end</span>
+
+honya = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0] <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">get hoho from argv</span>
+func(honya) <span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">call hello with a name honya</span>
+</pre>
+</div>
+
+<p>
+英語でしっかりとコメントが書ければ世界中に通用するcodeが書ける&#x2026;
+んでしょうかね？
+コメントをぐちゃぐちゃ書くんじゃなくて，
+もっとわかりやすい名前（method名，変数名）
+にしたくなるでしょう？
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">puts_hello</span> name
+  puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{name}</span><span style="font-style: italic;">."</span>
+<span style="font-weight: bold;">end</span>
+
+name = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0]
+puts_hello name
+</pre>
+</div>
+
+<p>
+こっちの方が短くてスッキリしていて圧倒的にいいでしょ？　
+適切な英単語を使えば，要らん説明が省けます．
+これが言語は英語からという意味です．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgfab14b3" class="outline-2">
+<h2 id="orgfab14b3"><span class="section-number-2">6</span> 長くなったら，隠せ</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+もしoptionのnameを打つのを忘れたら，
+問い合わせてくれると，
+user interfaceという感じがもっとするでしょう？
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby">name = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0]
+<span style="font-weight: bold;">if</span> name == <span style="font-weight: bold; font-style: italic;">nil</span>
+  puts <span style="font-style: italic;">"What\'s your name?"</span>
+  name = gets.chomp
+<span style="font-weight: bold;">end</span>
+</pre>
+</div>
+<p>
+というのをname=の下につけましょう[1]．ちょっと動かして見ましょう．
+</p>
+
+<pre class="example">
+&gt; ruby hello.rb
+
+</pre>
+
+<p>
+意図通りに動いていますか？　でもmain loopが長くなってきちゃいました．
+そこで，これもmethodに切り出します．
+領域を指定して(C-spaceで先頭を指定して移動),C-wでcut, 移動してC-yでyankです．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">gets_name</span>
+  name = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0]
+  <span style="font-weight: bold;">if</span> name == <span style="font-weight: bold; font-style: italic;">nil</span>
+    puts <span style="font-style: italic;">"What\'s your name?"</span>
+    name = gets.chomp
+  <span style="font-weight: bold;">end</span>
+  <span style="font-weight: bold;">return</span> name
+<span style="font-weight: bold;">end</span>
+
+name = gets_name
+</pre>
+</div>
+<p>
+この時，領域を指定してM-x indent-regionとしてください．あるいはC-x TAB.
+これだけでもだいぶ読みやすくなったでしょ？
+</p>
+
+<p>
+もっとできます．
+main loopにcursorを持って行って，'C-c @ C-l'と打ってみてください．
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">puts_hello</span> name...<span style="font-weight: bold;">end</span>
+
+<span style="font-weight: bold;">def</span> <span style="font-weight: bold;">gets_name...end</span>
+
+name = gets_name
+puts_hello name
+</pre>
+</div>
+
+<p>
+これがoutlineによるtoggle表示からきたすごいメタファなんですよ．
+何をしているのか知らなくていい部分は隠してしまおうというのが，
+methodに切り分ける理由なんです．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4b71e29" class="outline-2">
+<h2 id="org4b71e29"><span class="section-number-2">7</span> 今日の教え=1=- red green refactoring -</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+codingの基本操作を振り返っておきます．
+</p>
+<ul class="org-ul">
+<li>仕様 : 振る舞いを決めて，</li>
+<li>実装 : code書いて，</li>
+<li>テスト : 確認して，</li>
+<li>リファクト : 修正していく．</li>
+</ul>
+<p>
+これの繰り返しです．この流れを表す
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">red green refactoring
+</pre>
+</div>
+<p>
+という標語があります．忘れないでね．
+</p>
+</div>
+</div>
+<div id="outline-container-org4b7f16b" class="outline-2">
+<h2 id="org4b7f16b"><span class="section-number-2">8</span> 今日の教え=2=- editor -</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+ここで示した優秀なeditorのmeritは納得いただけましたでしょうか？
+必須操作を少しだけリストアップしておくと，
+</p>
+<ol class="org-ol">
+<li>editのkey-bind</li>
+<li>syntax high_lighting</li>
+<li>code hiding, show</li>
+<li>block copy, 移動</li>
+<li>query-replace</li>
+<li>shellとの連携</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Shigeto R. Nishitani</p>
+<p class="date">Created: 2019-10-07 月 11:24</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

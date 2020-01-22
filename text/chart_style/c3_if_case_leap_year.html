@@ -1,0 +1,788 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="jp" xml:lang="jp">
+<head>
+<!-- 2019-10-08 火 22:56 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>チャート式Ruby class[3] if, case, array, each by leap year</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Shigeto R. Nishitani" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/readtheorg/js/readtheorg.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">チャート式Ruby class[3] if, case, array, each by leap year</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgf7faf7e">1. if-elsif-else-end</a>
+<ul>
+<li><a href="#orgc94c932">1.1. お題はうるう年</a></li>
+<li><a href="#orgdc863b3">1.2. 簡単な解説:if-elsif-else-end</a></li>
+<li><a href="#org6487d6a">1.3. 詳しい解法:2004年はleap year</a></li>
+<li><a href="#orgaf7598a">1.4. 類題:1999はfalse</a></li>
+</ul>
+</li>
+<li><a href="#org8d83cb0">2. array, each</a>
+<ul>
+<li><a href="#orgb590243">2.1. お題:テストの自動化</a></li>
+<li><a href="#orgeaa3099">2.2. 簡単な解説: array, each</a></li>
+<li><a href="#org19ae2f5">2.3. 詳しい解法1:1900はtrue? いえいえfalse</a></li>
+<li><a href="#org992aedf">2.4. 詳しい解法2:refactoring 条件式の単純化</a></li>
+<li><a href="#org82888d1">2.5. 類題:そして2000はtrue！</a></li>
+<li><a href="#orgc67750a">2.6. 類題:refactoring_methodに</a></li>
+</ul>
+</li>
+<li><a href="#org52fdb4e">3. caseで</a>
+<ul>
+<li><a href="#org46b384a">3.1. お題:case</a></li>
+<li><a href="#orgaa4ae42">3.2. 簡単な解説</a></li>
+<li><a href="#org057a1df">3.3. 類題</a></li>
+</ul>
+</li>
+<li><a href="#orgdca27d0">4. もっとすごいtdd</a></li>
+<li><a href="#orga512884">5. テストをmain loopに書くこと</a></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgf7faf7e" class="outline-2">
+<h2 id="orgf7faf7e"><span class="section-number-2">1</span> if-elsif-else-end</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgc94c932" class="outline-3">
+<h3 id="orgc94c932"><span class="section-number-3">1.1</span> お題はうるう年</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+うるう年の課題ってやったことありますよね．
+</p>
+
+<pre class="example">
+入力がうるう年(leap year)かどうかを表示するプログラムをかけ．
+1. うるう年は4で割り切れる数の年．ただし，
+2. 100で割り切れる年はうるう年でなく，
+3. 400で割り切れる年はうるう年．
+4. 2004, 1999, 1900, 2000で試せ．
+5. それぞれtrue, false, false, true
+</pre>
+<p>
+この条件分岐をあらかじめ考えて実装するのってきつくなかったですか？
+そいつをテスト駆動開発の順を追って見てもらいましょう．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdc863b3" class="outline-3">
+<h3 id="orgdc863b3"><span class="section-number-3">1.2</span> 簡単な解説:if-elsif-else-end</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+<a href="https://docs.ruby-lang.org/ja/index.html">https://docs.ruby-lang.org/ja/index.html</a>を読んで見てください．
+これは，オブジェクト指向スクリプト言語 Ruby リファレンスマニュアルです．
+文法は，rubyの使っているversionに合わせて中身を見てください．
+そいつを開けて，「Rubyの文法:制御構造」の「条件分岐if」に「文法」として
+次のような記述があります．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">if</span> &#24335; [<span style="color: #a020f0;">then</span>]
+  &#24335; ...
+[<span style="color: #a020f0;">elsif</span> &#24335; [<span style="color: #a020f0;">then</span>]
+  &#24335; ... ]
+...
+[<span style="color: #a020f0;">else</span>
+  &#24335; ... ]
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+その解説を「読めばわかる」と思うかもしれませんが，例を見るほうがいいかも．
+ただし，上の表現で[]は省略可能箇所を示しています．
+従って，最小で
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">if</span> year%4==0 <span style="color: #a020f0;">then</span>
+  p <span style="color: #8b2252;">'not leap year'</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+とかになります．さらにthenは省略可能で，ifをつなげるのはelsifです．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6487d6a" class="outline-3">
+<h3 id="org6487d6a"><span class="section-number-3">1.3</span> 詳しい解法:2004年はleap year</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+まずお題の4,5は振る舞いを記述する仕様(specification, spec)ではないですよね．例えば，
+</p>
+<pre class="example">
+ruby check_leap_year.rb 2004
+
+</pre>
+<p>
+とした時に
+</p>
+<pre class="example">
+true
+
+</pre>
+<p>
+と返ってきてほしいというテストの仕様です．
+</p>
+
+<p>
+2004年の振る舞いだけを実装すると，
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>./codes/check_leap_2004.rb 2004</label><pre class="src src-ruby">p year = <span style="color: #228b22;">ARGV</span>[0].to_i
+<span style="color: #a020f0;">if</span> year % 4 == 0
+  p <span style="color: #a0522d;">true</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+
+<p>
+です．これをtestすると
+</p>
+<pre class="example">
+&gt; ruby check_leap_2004.rb 2004
+2004
+true
+</pre>
+<p>
+となります．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgaf7598a" class="outline-3">
+<h3 id="orgaf7598a"><span class="section-number-3">1.4</span> 類題:1999はfalse</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+次に1999をtestすると
+</p>
+<pre class="example">
+&gt; ruby check_leap_0.rb 1999
+1999
+</pre>
+<p>
+です．これをfalseと返すようにすると，
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 2: </span>check_leap_2004_1999.rb</label><pre class="src src-ruby">p year = <span style="color: #228b22;">ARGV</span>[0].to_i
+<span style="color: #a020f0;">if</span> year%4 == 0
+  p <span style="color: #a0522d;">true</span>
+<span style="color: #a020f0;">else</span>
+  p <span style="color: #a0522d;">false</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+ちゃんと返ってます？
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8d83cb0" class="outline-2">
+<h2 id="org8d83cb0"><span class="section-number-2">2</span> array, each</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orgb590243" class="outline-3">
+<h3 id="orgb590243"><span class="section-number-3">2.1</span> お題:テストの自動化</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+この後，さらにテストの内容が増えてくると，
+いちいち引数(ARGV[0])で全てチェックするのが面倒になってきそうでしょ．
+lazy programmerは二つ以上は耐えられません．
+そこで，テストを自動化をしなさい．
+</p>
+
+<p>
+なに，配列にしてloopで回すだけです．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">[2004, 1999].each <span style="color: #a020f0;">do</span> |year|
+  p year
+  <span style="color: #a020f0;">if</span> year%4 == 0
+    p <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">else</span>
+    p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">end</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgeaa3099" class="outline-3">
+<h3 id="orgeaa3099"><span class="section-number-3">2.2</span> 簡単な解説: array, each</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+先ほどの<a href="https://docs.ruby-lang.org/ja/index.html">https://docs.ruby-lang.org/ja/index.html</a>で
+何かを探すときはるりまサーチ(全文検索)へ行ってください．
+そこで，Array#eachと検索を掛けてください．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">&#21508;&#35201;&#32032;&#12395;&#23550;&#12375;&#12390;&#12502;&#12525;&#12483;&#12463;&#12434;&#35413;&#20385;&#12375;&#12414;&#12377;&#12290;
+
+&#12502;&#12525;&#12483;&#12463;&#12364;&#19982;&#12360;&#12425;&#12428;&#12394;&#12363;&#12387;&#12383;&#22580;&#21512;&#12399;&#12289;&#33258;&#36523;&#12392; each &#12363;&#12425;&#29983;&#25104;&#12375;&#12383;
+<span style="color: #228b22;">Enumerator</span> &#12458;&#12502;&#12472;&#12455;&#12463;&#12488;&#12434;&#36820;&#12375;&#12414;&#12377;&#12290;
+
+[1, 2, 3].each <span style="color: #a020f0;">do</span> |i|
+puts i
+<span style="color: #a020f0;">end</span>
+<span style="color: #b22222;">#</span><span style="color: #b22222;">=&gt; 1</span>
+2
+3
+</pre>
+</div>
+<p>
+この記法では，出力が#=&gt;以下に記されています．
+</p>
+
+<p>
+配列Arrayは[]で定義されます．
+その中身を順番に処理するときには，上記のような
+気泡が用いられます．rubyでdo-loop内で使う値は'|i|'
+のように縦棒で挟まれた変数名に入っていきます．
+これはmethodで引数名を参照するのに似せた構文です．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org19ae2f5" class="outline-3">
+<h3 id="org19ae2f5"><span class="section-number-3">2.3</span> 詳しい解法1:1900はtrue? いえいえfalse</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+では次の
+</p>
+<pre class="example">
+100で割り切れる年はうるう年でなく，
+
+</pre>
+<p>
+ですが，1900はtrueが返って来るのをfalseが返るように変更します．
+</p>
+
+<p>
+まずはテストの修正
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">[1900, 2004, 1999].each <span style="color: #a020f0;">do</span> |year|
+</pre>
+</div>
+
+<p>
+次に100で割り切れる場合の処理です．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">if</span> year%100 == 0
+  p <span style="color: #a0522d;">false</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+なんですが，これをどこに入れるかで悩んでしまいます．
+とりあえず別処理として前に付け加えておくと，
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 3: </span>codes/check_leap_1900_2004_1999.rb</label><pre class="src src-ruby">[1900,2004,1999].each <span style="color: #a020f0;">do</span> |year|
+  p year
+  <span style="color: #a020f0;">if</span> year % 100 ==0
+    p <span style="color: #a0522d;">false</span>
+    <span style="color: #a020f0;">next</span>
+  <span style="color: #a020f0;">end</span>
+  <span style="color: #a020f0;">if</span> year % 4 == 0
+    p <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">else</span>
+    p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">end</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+
+<p>
+そしてtestです．
+</p>
+<pre class="example">
+&gt; ruby check_leap_1900_2004_1999.rb 
+1900
+false
+2004
+true
+1999
+false
+</pre>
+<p>
+うまいこと動いていますよね．
+</p>
+</div>
+</div>
+<div id="outline-container-org992aedf" class="outline-3">
+<h3 id="org992aedf"><span class="section-number-3">2.4</span> 詳しい解法2:refactoring 条件式の単純化</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+先ほどの条件式は二つに完全に分けています．
+でも，論理的にネスト(入れ子)にする方がいい場合もあります．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">[1900,2004,1999].each <span style="color: #a020f0;">do</span> |year|
+  p year
+  <span style="color: #a020f0;">if</span> year % 100 ==0
+    p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">else</span>
+    <span style="color: #a020f0;">if</span> year % 4 == 0
+      p <span style="color: #a0522d;">true</span>
+    <span style="color: #a020f0;">else</span>
+      p <span style="color: #a0522d;">false</span>
+    <span style="color: #a020f0;">end</span>
+  <span style="color: #a020f0;">end</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+ですが，ここまでするとif 100 else .. endのelseを省略できることがわかるでしょ．
+そうすると，
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">[1900,2004,1999].each <span style="color: #a020f0;">do</span> |year|
+  p year
+  <span style="color: #a020f0;">if</span> year % 100 ==0
+    p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">elsif</span> year % 4 == 0
+    p <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">else</span>
+    p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">end</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+となります．
+</p>
+</div>
+</div>
+<div id="outline-container-org82888d1" class="outline-3">
+<h3 id="org82888d1"><span class="section-number-3">2.5</span> 類題:そして2000はtrue！</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+最後の
+</p>
+<pre class="example">
+3. 400で割り切れる年はうるう年．
+
+</pre>
+<p>
+です．2000年はtrue?
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc67750a" class="outline-3">
+<h3 id="orgc67750a"><span class="section-number-3">2.6</span> 類題:refactoring_methodに</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+次はmethodにしたくなりますよね．関数の名前はleap?
+としましょう．
+</p>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 4: </span>codes/check_leap_year_method.rb</label><pre class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">leap?</span>(year)
+  <span style="color: #a020f0;">if</span> year % 400 ==0
+    p <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">elsif</span> year % 100 ==0
+    p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">elsif</span> year % 4 == 0
+    p <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">else</span>
+    p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">end</span> 
+<span style="color: #a020f0;">end</span>
+[2000, 1900, 2004, 1999].each <span style="color: #a020f0;">do</span> |year|
+  p year
+  leap?(year)
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+です．true falseを返して，main loopでpする方がいいです．
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org52fdb4e" class="outline-2">
+<h2 id="org52fdb4e"><span class="section-number-2">3</span> caseで</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org46b384a" class="outline-3">
+<h3 id="org46b384a"><span class="section-number-3">3.1</span> お題:case</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+ここまででも十分に綺麗なのですが，もっと綺麗にかけます．
+caseを使って短くせよ．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgaa4ae42" class="outline-3">
+<h3 id="orgaa4ae42"><span class="section-number-3">3.2</span> 簡単な解説</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+先ほどの<a href="https://docs.ruby-lang.org/ja/2.5.0/doc/spec=2fcontrol.html#if">reference manualのif</a>の下の方にcaseの解説があります．文法は
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">case</span> [&#24335;]
+[<span style="color: #a020f0;">when</span> &#24335; [, &#24335;] ...[, <span style="color: #8b2252;">`*' &#24335;] [then]</span>
+<span style="color: #8b2252;">  &#24335;..]..</span>
+<span style="color: #8b2252;">[when `</span>*<span style="color: #8b2252;">' &#24335; [then]</span>
+<span style="color: #8b2252;">  &#24335;..]..</span>
+<span style="color: #8b2252;">[else</span>
+<span style="color: #8b2252;">  &#24335;..]</span>
+<span style="color: #8b2252;">end</span>
+</pre>
+</div>
+<p>
+です．そこにある例も参照してください．
+ちょっと例と違うのは，普通は0番の式を共通にして一致判定をするのですが，
+それを省略して一致判定をしてもいいというところです．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org057a1df" class="outline-3">
+<h3 id="org057a1df"><span class="section-number-3">3.3</span> 類題</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+ちゃんと動くのは，
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">leap?</span>(year)
+  <span style="color: #a020f0;">case</span>
+  <span style="color: #a020f0;">when</span> year % 400 ==0 ; <span style="color: #a020f0;">return</span> <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">when</span> year % 100 ==0 ; <span style="color: #a020f0;">return</span> <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">when</span> year % 4 ==0 ;   <span style="color: #a020f0;">return</span> <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">else</span> ;                 <span style="color: #a020f0;">return</span> <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">end</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+です．
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdca27d0" class="outline-2">
+<h2 id="orgdca27d0"><span class="section-number-2">4</span> もっとすごいtdd</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+上の知識があると全く逆からのtddも可能です．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">leap?</span>(year)
+  <span style="color: #a020f0;">case</span> 
+  <span style="color: #a020f0;">when</span> year == 2000 ; p <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">when</span> year == 1900 ; p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">when</span> year == 2004 ; p <span style="color: #a0522d;">true</span>
+  <span style="color: #a020f0;">else</span>              ; p <span style="color: #a0522d;">false</span>
+  <span style="color: #a020f0;">end</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+ですよね．この後，より一般化して，
+</p>
+<pre class="example">
+2000 -&gt; % 400 == 0
+
+</pre>
+<p>
+とかにしても問題ありません．
+</p>
+
+<p>
+さらに，
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">leap?</span>(year)
+  <span style="color: #a020f0;">return</span> <span style="color: #a020f0;">case</span>
+         <span style="color: #a020f0;">when</span> year % 400 ==0 ; <span style="color: #a0522d;">true</span>
+         <span style="color: #a020f0;">when</span> year % 100 ==0 ; <span style="color: #a0522d;">false</span>
+         <span style="color: #a020f0;">when</span> year % 4 ==0   ; <span style="color: #a0522d;">true</span>
+         <span style="color: #a020f0;">else</span>                ; <span style="color: #a0522d;">false</span>
+         <span style="color: #a020f0;">end</span>
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+<p>
+とするといいかも．これは確認済み．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga512884" class="outline-2">
+<h2 id="orga512884"><span class="section-number-2">5</span> テストをmain loopに書くこと</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+こういう風に，main loopにテストを書くのは正しいのでしょうか？
+大学の課題ならいざ知らず，会社でこんなことしていいんでしょうか？
+</p>
+
+<p>
+いいんですよ．
+</p>
+
+<p>
+昔は推奨されていたぐらいですから．
+leap?関数がどのような振る舞いをするべきかを仕様(spec)として書いておくと，
+関数を使う人にも，関数を改良する人にも，関数を探している人にも便利ですよね．
+そういう仕様は，どこにおけばいいんでしょう？
+関数の置き場所にできるだけ近いところがいいと思いませんか？
+なら，main loopでしょ．
+</p>
+
+<p>
+TDDのバイブルのKent Beck本でもxUnitというのをmain loopに．．
+あ，違うな．でも工夫しましょ．
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Shigeto R. Nishitani</p>
+<p class="date">Created: 2019-10-08 火 22:56</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,61 @@
+#+TITLE:  4th lesson for ruby novice -- hello method string class--
+#+AUTHOR:  Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:2 num:2
+#+SETUPFILE: /Users/bob/Github/ornb/lib/theme-readtheorg.setup
+
+#+STARTUP: indent 
+#+OPTIONS: ^:{}
+
+* class化
+オブジェクト指向というのを聞いたことがあると思います．
+このキーとなる考え方が，
+- 隠蔽(capsulation)
+- 継承(inheritance)
+- 多形(polymorphism)
+です．methodにするのはある種の隠蔽なんですが，
+さらに言語のシステムとして徹底したのが，classです．
+
+* 隠蔽工作
+先ほどのhello.rbをもう一度見てください．
+#+begin_src ruby
+def puts_hello name...end
+
+def gets_name...end
+
+name = gets_name
+puts_hello name
+#+end_src
+main loopがありますよね．「こいつも消せないか？」というのがclassの発想です．
+#+begin_src ruby
+class Hello
+  def initialize
+    name = gets_name
+    puts_hello name
+  end
+
+  def puts_hello name
+    puts "Hello #{name}."
+  end
+
+  def gets_name
+    name = ARGV[0]
+    if name == nil
+      puts "What\'s your name?"
+      name = gets.chomp
+    end
+    return name
+  end
+end
+
+Hello.new
+#+end_src
+
+: > ruby hello.rb
+としてみてください．同じでしょ．同じなんですよ．
+さらにcursorをclassという単語の直後に持ってきてC-c C-hしてみてください．
+綺麗でしょ．表示させるのはC-c C-sです．
+
+* String継承
+

@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="jp" xml:lang="jp">
+<head>
+<!-- 2019-10-09 水 14:53 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>チャート式Ruby class[2] variable and method</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Shigeto R. Nishitani" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/readtheorg/js/readtheorg.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">チャート式Ruby class[2] variable and method</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org33e62c6">1. variable</a>
+<ul>
+<li><a href="#org62e3ad0">1.1. お題</a></li>
+<li><a href="#org4ba0268">1.2. 簡単な解説</a></li>
+<li><a href="#org87f1a3d">1.3. 詳しい解法</a></li>
+<li><a href="#org9b1ea04">1.4. 類題</a></li>
+</ul>
+</li>
+<li><a href="#org256445a">2. method</a>
+<ul>
+<li><a href="#org9dec26f">2.1. お題</a></li>
+<li><a href="#org9d535bd">2.2. 解説</a></li>
+<li><a href="#org4503d5c">2.3. 解法</a></li>
+<li><a href="#org9d8ccb7">2.4. 類題</a></li>
+</ul>
+</li>
+<li><a href="#orgdb12208">3. ここで学んだこと</a></li>
+<li><a href="#org23a0f7a">4. TDD</a>
+<ul>
+<li><a href="#org7503c62">4.1. codingの最終目標</a></li>
+<li><a href="#org85bf9cd">4.2. clean code that works</a></li>
+<li><a href="#org16da3f2">4.3. phases and speed</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org33e62c6" class="outline-2">
+<h2 id="org33e62c6"><span class="section-number-2">1</span> variable</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org62e3ad0" class="outline-3">
+<h3 id="org62e3ad0"><span class="section-number-3">1.1</span> お題</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+受け取った引数ARGV[0]をnameという変数(variable)に代入して
+それを打ち出すcodeを書け．
+</p>
+<pre class="example">
+&gt; ruby name_variable.rb Rudy
+Rudy
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org4ba0268" class="outline-3">
+<h3 id="org4ba0268"><span class="section-number-3">1.2</span> 簡単な解説</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+rubyの変数は型宣言の必要性がありません．
+文脈に合わせて適当に型が定められます．
+イコールで代入されます．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">name = <span style="color: #8b2252;">'Rudy'</span>
+</pre>
+</div>
+<p>
+なんかです．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org87f1a3d" class="outline-3">
+<h3 id="org87f1a3d"><span class="section-number-3">1.3</span> 詳しい解法</h3>
+<div class="outline-text-3" id="text-1-3">
+<pre class="example">
+&gt; ruby name_variable.rb Rudy
+</pre>
+<p>
+としましょう．
+</p>
+<pre class="example">
+ruby: No such file or directory -- name_variable.rb (LoadError)
+</pre>
+<p>
+というエラーが返ってきますよね．そんなファイルないよって．
+なら作ります．
+</p>
+<pre class="example">
+&gt; emacs name_variable.rb
+</pre>
+<p>
+としてemacsを起動して
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">p <span style="color: #8b2252;">"Rudy"</span>
+</pre>
+</div>
+<p>
+と打ち込んでsaveしましょう．
+</p>
+<pre class="example">
+&gt; ruby name_variable.rb Rudy
+"Rudy"
+</pre>
+<p>
+　
+</p>
+</div>
+</div>
+<div id="outline-container-org9b1ea04" class="outline-3">
+<h3 id="org9b1ea04"><span class="section-number-3">1.4</span> 類題</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+さてこの後，
+</p>
+<ul class="org-ul">
+<li>nameに代入してRudyと打ち出すようにrefactoringしてください．</li>
+<li>ARGV[0]を受け取って，自分の名前を返すようにrefactoringしてください</li>
+</ul>
+<p>
+p "Rudy"
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org256445a" class="outline-2">
+<h2 id="org256445a"><span class="section-number-2">2</span> method</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org9dec26f" class="outline-3">
+<h3 id="org9dec26f"><span class="section-number-3">2.1</span> お題</h3>
+<div class="outline-text-3" id="text-2-1">
+<pre class="example">
+&gt; ruby hello_method.rb Rudy
+Hell Rudy.
+</pre>
+<p>
+と返すhello methodを作りなさい．
+</p>
+</div>
+</div>
+<div id="outline-container-org9d535bd" class="outline-3">
+<h3 id="org9d535bd"><span class="section-number-3">2.2</span> 解説</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Rubyではfunctionやprocedureなどのまとまりはmethodを定義(definition)することになります．
+methodは0個以上の引数(argument)を取ることができます．
+例えば次の通りです．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="color: #a020f0;">def</span> <span style="color: #0000ff;">hello</span>(name)
+  p name
+<span style="color: #a020f0;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4503d5c" class="outline-3">
+<h3 id="org4503d5c"><span class="section-number-3">2.3</span> 解法</h3>
+<div class="outline-text-3" id="text-2-3">
+<pre class="example">
+&gt; ruby hello_method.rb Rudy
+</pre>
+<p>
+として見ましょう．もちろん動きませんよね．
+emacsでhello_method.rbを編集します．
+</p>
+<pre class="example">
+&gt; emacs hello_method.rb
+</pre>
+<p>
+何ですが，methodの中身ではなく呼び出す方から考えます．
+普通に，
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">hello(name)
+</pre>
+</div>
+<p>
+と打ち込んで動かして見てください．
+</p>
+<pre class="example">
+&gt; ruby hello_method.rb Rudy
+hello_method.rb:1:in `&lt;main&gt;': undefined local variable or method `name' for main:Object (NameError)
+</pre>
+<p>
+というエラーが返ってきたはずです．nameという変数やmethodがundefineやと怒られています．
+そこで今まで学んできたのを思い出して，
+nameにARGV[0]を代入します．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">name = <span style="color: #228b22;">ARGV</span>[0]
+hello(name)
+</pre>
+</div>
+<p>
+次のerrorは
+</p>
+<pre class="example">
+&gt; ruby hello_method.rb Rudy
+hello_method.rb:2:in `&lt;main&gt;': undefined method `hello' for main:Object (NoMethodError)
+</pre>
+<p>
+でhelloっていうmethodがないよですね．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9d8ccb7" class="outline-3">
+<h3 id="org9d8ccb7"><span class="section-number-3">2.4</span> 類題</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+先の解法を参照してhello メソッドを完成させてください．
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>hello_method.rb</label><pre class="src src-ruby">name = <span style="color: #228b22;">ARGV</span>[0]
+hello(name)
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-orgdb12208" class="outline-2">
+<h2 id="orgdb12208"><span class="section-number-2">3</span> ここで学んだこと</h2>
+<div class="outline-text-2" id="text-3">
+<ul class="org-ul">
+<li>ruby
+<ul class="org-ul">
+<li>variable</li>
+<li>method</li>
+<li>argument</li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org23a0f7a" class="outline-2">
+<h2 id="org23a0f7a"><span class="section-number-2">4</span> TDD</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org7503c62" class="outline-3">
+<h3 id="org7503c62"><span class="section-number-3">4.1</span> codingの最終目標</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+こういうcodingの仕方はTDD(Test Driven Development:テスト駆動開発)
+と呼ばれています．
+</p>
+
+<ul class="org-ul">
+<li>テストを作る</li>
+<li>エラーを出す(red)</li>
+<li>エラーをなくす(green)</li>
+<li>codeを綺麗にする(refactoring)</li>
+</ul>
+<p>
+です．codingの最終目標は
+</p>
+<pre class="example">
+clean code that works
+
+</pre>
+<p>
+動く綺麗なコードを作ることです．
+順番は，まず動かして，それからこそこそと綺麗にするです．
+えっと，もし，あなたが，
+</p>
+<ul class="org-ul">
+<li>codeを書くまえに設計すべき</li>
+<li>コピペは悪</li>
+</ul>
+<p>
+なんていう，マントラを信じているなら
+このprogramming styleを提唱し始めたKent Beckの文章を
+載せておきます．よーーく心に刻んでください．
+</p>
+
+<p>
+もしあなたがプログラミング嫌いならば，
+少し心が晴れると思いますよ．俺のせいじゃないって．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org85bf9cd" class="outline-3">
+<h3 id="org85bf9cd"><span class="section-number-3">4.2</span> clean code that works</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+TDD by Example (Kent Beck) p.13
+</p>
+<blockquote>
+<p>
+目指すのは，動作するきれいなコードだ
+(このRon Jeffriesの簡潔な表現は素晴らしい).
+動作するきれいなコードは，偉大なプログラマでも
+すぐには書けないことがあるし，
+普通のプログラマならなおさらだ(私もそうだ)．
+<code>=ここは分割統治しよう．=</code>
+各個撃破だぜ，ベイビー.
+最初に「動作する」に取り組み，
+その後で「きれいな」に取り組む．
+この方法はアーキテクチャ駆動とは正反対だ．
+アーキテクチャ駆動は「きれいなコード」に最初に取り組み，
+そのうえで苦心してあちこち設計の辻褄を
+合わせながらどうにか「動作する」を実現させる．
+</p>
+</blockquote>
+
+<p>
+TDD by Example (Kent Beck) p.11
+</p>
+<blockquote>
+<p>
+The goal is clean code that works
+(thenks to Ron Jeffries for this pithy summary).
+Clean code that works is out of the reach of even the best programmers
+some of the time,
+and out of the reach of most programmers(like me)
+most of the time.
+Divide and conquer, baby.
+First we'll solve the "that works" part of the problem.
+Then we'll solve the "clean code" part.
+This is the opposite of architecture-driven development,
+where you solve "clean code" first,
+then scramble around trying to integrate into the design the things you learn 
+as you solve the "that works" problem.
+</p>
+</blockquote>
+</div>
+</div>
+<div id="outline-container-org16da3f2" class="outline-3">
+<h3 id="org16da3f2"><span class="section-number-3">4.3</span> phases and speed</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+TDD by Example (Kent Beck) p.30
+</p>
+<blockquote>
+<p>
+グリーンバーを出す小さなステップはどんなものだろうか．
+Dollarクラスを丸ごとコピーして，
+DollarをFrancに書き換えるのはどうだろう．
+</p>
+
+<p>
+ちょっと待った．
+これで唾棄すべき糞コードの出来上がりだと
+あざ笑う声が聞こえる．
+その声は続けて言う．
+コピー&amp;ペーストによる再利用は
+抽象化の敗北であり，きれいな設計を殺すと．
+</p>
+
+<p>
+イラっとしただろうか．なら深呼吸だ．
+鼻から息を吸い込んで，3秒止めて口から吐き出す．
+オーケー？
+さて，サイクルにはフェーズがあることを思い出してほしい
+(中には数秒で通り過ぎるものもあるが，フェーズはフェーズだ)．
+</p>
+<ol class="org-ol">
+<li>テストを書く．</li>
+<li>コンパイラを通す．</li>
+<li>テストを走らせ，失敗を確認する．</li>
+<li>テストを通す．</li>
+<li>重複を排除する．</li>
+</ol>
+
+
+<p>
+各フェーズにはフェーズなりの目的と解決法があり，
+価値観も異なっている．
+最初の３つのフェーズはなるべく速く通過して，
+新しい機能がどの状態にあるのかわかるところまで行きたい．
+そこにたどり着くためには，どのような罪をおかしてもよい．
+その短い時間だけは，速度が設計よりも重要だからだ．
+</p>
+
+<p>
+１つ心配なのは，私がここに書いていることが，
+良い設計の原則を無視してよいという免罪符になってしまうことだ．
+チームに対して
+「Kent Beckが設計なんてどうでもいいって書いてたよ」
+などと言い始めるのは，ちょっと待ってほしい．
+サイクルはまだ終わっていない．
+4つ足のアーロンチェアは倒れる．
+最初の4つのステップは，5つ目がなければ無意味だ．
+正しい設計を，正しいタイミングで行う．
+動かしてから，正しくする．
+</p>
+
+<p>
+ここまで言っておけば安心だろう．
+これで読者の皆さんは重複を排除するまで
+誰にもコードを見せないはずだ
+(ただし，ペアプロ相手は除く)
+</p>
+</blockquote>
+
+<p>
+TDD by Example (Kent Beck) p.23
+</p>
+<blockquote>
+<p>
+What short step will get us to a green bar?
+Copying the Dollar code and replacing Dollar with Franc.
+</p>
+
+<p>
+Stop.  Hold on.
+I can hear the aesthetically inclined among you sneering and spitting.
+Copy-and-paste reuse?
+The death of abstraction?
+The killer of clean design?
+</p>
+
+<p>
+If you're upset, take a cleanthing breath.
+In through the nose &#x2026; 
+hold it 1, 2, 3&#x2026; out through the mouth.
+There. Remember, our cycle has different phases
+(they go by quickly, often in seconds, but they are phases.):
+</p>
+<ol class="org-ol">
+<li>Write a test.
+<ol class="org-ol">
+<li>Make it compile.</li>
+<li>Run it to see that it fails.</li>
+</ol></li>
+<li>Make it run.</li>
+<li>Remove duplication.
+(Make it right.)</li>
+</ol>
+
+<p>
+The different phases have different purposes.
+They call for different styles of solution, different aesthetic viewpoints.
+The first three phases need to go by quickly,
+so we get to a known state with the new functionality.
+We can commit any number of sins to get there,
+because speed trumps design,
+just for that brief moment.
+</p>
+
+<p>
+Now I'm worried.
+I've given you a license to abandon all the principles of good design.
+Off you go to your teams &#x2013;
+"Kent says all that design stuff doesn't matter."
+Halt.  The cycle is not complete.
+A four-legged Aeron chair falls over.
+The first four steps of the cycle won't work without the fifth.
+Good design at good times.
+Make it run, make it right.
+</p>
+
+<p>
+There, I feel better.
+Now I'm sure you won't show anyone except your partner your code
+until you've removed the duplication.
+Where were we?
+Ah, yes.
+Violating all the tenets of good design in the interest of speed
+(penance for our sin will occupy the next several chapters).
+</p>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Shigeto R. Nishitani</p>
+<p class="date">Created: 2019-10-09 水 14:53</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,167 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: assert_equal
+#+AUTHOR: Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:t num:2
+
+#+SETUPFILE: ~/.emacs.d/org-mode/theme-readtheorg.setup
+
+* equal
+テスト駆動開発で今後の学習を進めて行くんですが，
+その根本となるassert_equalを作って置きます．
+どんなのでもいいんですが，自分で作ると好きにできますんで，
+その様子を見てもらいましょう．
+assert equalとはequalかどうかを確かめる(assert)関数です．
+
+まずは1==1です．
+#+begin_src ruby
+p 1==1
+#+end_src
+として見ましょう．
+#+begin_example
+> ruby assert_equal.rb
+true
+#+end_example
+と返ってきてますか？
+* method
+これをmethodにします．英語の感覚だと，
+: assert equal expected and result
+とでもなるでしょうか．なんで，
+: assert_equal(expected, result)
+という感じです．まずはred
+#+begin_src ruby
+p assert_equal(1, 1)
+#+end_src
+として見ましょう．
+#+begin_example
+> ruby assert_equal.rb
+assert_equal.rb:1:in `<main>': undefined method `assert_equal' for main:Object (NoMethodError)
+#+end_example
+関数がないと怒られますよね．
+それなら，
+#+begin_src ruby
+def assert_equal(expected, result)
+  return expected == result
+end
+
+p assert_equal(1, 1)
+#+end_src
+なら動くし，ちゃんとtrueが返ってますよね．
+* red, green
+これだけだと，殺風景なんで，red, green, refactoringという標語に
+したがって動作するように変えます．
+肝は，colorizeです．
+#+begin_src ruby
+require 'colorize'
+
+def assert_equal(expected, result)
+  if expected == result
+    puts 'true'.green
+  else
+    puts 'false'.red
+  end
+end
+
+assert_equal(1, 1)
+#+end_src
+どうです．greenでしょ？
+
+ならtestにredも付け加えて置きましょう．
+: assert_equal(1, 2)
+redでしょ？
+
+* richer output
+もう少し出力をrichにしましょう．
+- 引数でとってきた，expected, resultの値をそのまま出力
+- どうなったかを記述
+  - true :: print "succeeded in assert_equal.\n".green
+  - false :: print "failed in assert_equal.\n".red
+
+どうです．できました？
+* assert_not_equal
+: assert_not_equal(1, 2)
+を考えましょう．まずはtestです．上のんを入れて実行して見ましょう．
+#+begin_example
+> ruby assert_equal.rb
+expected :: 1
+result   :: 1
+succeeded in assert_equal.
+expected :: 1
+result   :: 2
+failed in assert_equal.
+assert_equal.rb:15:in `<main>': undefined method `assert_not_equal' for main:Object (NoMethodError)
+Did you mean?  assert_equal
+#+end_example
+なんかが返ってくるでしょうか．関数がないと怒られます．
+まずはcopy & pasteします．
+関数名だけassert_equalからassert_not_equalに直しましょう．
+#+begin_example
+expected :: 1
+result   :: 2
+failed in assert_equal.
+#+end_example
+となります．このままだと，振る舞いがおかしいですよね．
+修正します．
+#+begin_example
+expected :: 1
+result   :: 2
+succeeded in assert_not_equal.
+#+end_example
+となればOKです．
+
+* refactoringというほどでもないですが，
+重複している箇所も取り除きましょう．最終的には，
+#+begin_src ruby
+require 'colorize'
+def puts_vals(expected, result)
+  puts "expected :: #{expected}"
+  puts "result   :: #{result}"
+end
+def assert_not_equal(expected, result)
+  puts_vals(expected, result)
+  if expected != result
+    print "succeeded in #{__method__}.\n".green
+  else
+    print "failed in #{__method__}.\n".red
+  end
+end
+
+def assert_equal(expected, result)
+  puts_vals(expected, result)
+  case expected == result
+  when true then print "succeeded in #{__method__}.\n".green
+  when false then print "failed in #{__method__}.\n".red
+  end
+end
+#+end_src 
+ぐらいになったでしょうか．
+* 重複実行の予防
+このcodeは今後繰り返し使っています．
+そのためには，requireで呼び出す必要があります．
+同じdirectoryに写して使うようにします．
+
+例えば，
+#+begin_src ruby
+require './assert_equal'
+
+assert_equal(2, 1*2)
+#+end_src
+というように使います．
+
+しかし，今のままだとassert_equal.rbに書いたテストがそのまま実行されてしまいます．
+そこで，そういうのを回避してくれるidiom(熟語)があります．
+#+begin_src ruby
+if $PROGRAM_NAME == __FILE__
+  assert_equal(1, 1)
+  assert_equal(1, 2)
+  assert_not_equal(1, 2)
+  assert_not_equal(1, 1)
+end
+#+end_src
+です．意味は，codeが書いてあるファイル名(__FILE__)が，
+動いているファイル名($PROGRAM_NAME)と
+一致したら中身を実行です．
+これはidiomなんで...覚えてください．あ，ここに書いてあるということをね．
+

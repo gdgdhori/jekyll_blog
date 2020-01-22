@@ -1,0 +1,286 @@
+#+TITLE:  first lesson for ruby novice -- hello method --
+#+AUTHOR:  Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:2 num:2
+#+SETUPFILE: ~/.emacs.d/org-mode/theme-readtheorg.setup
+
+#+STARTUP: indent 
+#+OPTIONS: ^:{}
+
+* class化
+オブジェクト指向というのを聞いたことがあると思います．
+このキーとなる考え方が，
+- 隠蔽(capsulation)
+- 継承(inheritance)
+- 多形(polymorphism)
+です．methodにするのはある種の隠蔽なんですが，
+さらに言語のシステムとして徹底したのが，classです．
+
+* 隠蔽工作
+先ほどのhello.rbをもう一度見てください．
+#+begin_src ruby
+def puts_hello name...end
+
+def gets_name...end
+
+name = gets_name
+puts_hello name
+#+end_src
+main loopがありますよね．「こいつも消せないか？」というのがclassの発想です．
+#+begin_src ruby
+class Hello
+  def initialize
+    name = gets_name
+    puts_hello name
+  end
+
+  def puts_hello name
+    puts "Hello #{name}."
+  end
+
+  def gets_name
+    name = ARGV[0]
+    if name == nil
+      puts "What\'s your name?"
+      name = gets.chomp
+    end
+    return name
+  end
+end
+
+Hello.new
+#+end_src
+
+: > ruby hello.rb
+としてみてください．同じでしょ．同じなんですよ．
+さらにcursorをclassという単語の直後に持ってきてC-c C-hしてみてください．
+綺麗でしょ．表示させるのはC-c C-sです．
+
+* colorize-出色の継承-
+継承を具体化したものにはいくつもありますが，出色なのはcolorizeです．
+ちょっと例を見てみましょう．
+
+colorizeはgemなんで，installが必要かもしれません．なに，
+: > gem install colorize
+するだけです．関学のproxyで引っかかっている人は，
+: > gem install colorize -r -p http://proxy.ksc.kwansei.ac.jp:8080
+してください．
+
+これを使います．puts_helloを書き換えます．
+#+begin_src ruby
+  require 'colorize'
+  def puts_hello name
+    puts "Hello #{name}.".green
+  end
+#+end_src
+どうよ．出色でしょ．色々出せますんで，試してみてください．
+
+#+begin_src ruby
+> irb
+irb(main):001:0> require 'colorize'
+=> true
+irb(main):002:0> String.colors
+=> [:black, :light_black, :red, :light_red, :green, :light_green, :yellow, :light_yellow, :blue, :light_blue, :magenta, :light_magenta, :cyan, :light_cyan, :white, :light_white, :default]
+#+end_src
+colorizeは，本当の意味での継承ではなく，ruby標準のStringを上載せ(override)します．
+こんなのがすぐに使えて色々あるのがrubyです．いや，object思考です．
+
+* say_hello
+色だけだと大したimpactを普通の人には与えません．では．．．
+
+喋らしてみましょう．
+#+begin_src ruby
+  def initialize
+    name = gets_name
+    puts_hello name
+    say_hello name
+  end
+
+  def say_hello name
+    greeting = "Hello #{name}"
+    system "say -v 'Samantha' #{greeting}"
+  end
+#+end_src
+どうよ．systemというのはシステムに命令を投げているだけです．
+ですんで，これはrubyがすごいんじゃなくて，osxにsayというcommandがあって，
+そいつがすごいんですよ．
+
+詳しい使い方は，[[https://qiita.com/daddygongon/items/015776289372057dd6a7][OSXのterminalのsayで多言語をしゃべらせてみる]] にあります．
+「いいね」をポチッとしましょう!!!
+
+多分linuxでもいけるはずです．ダメな時やwinさんたちは，
+- [[http://takuya-1st.hatenablog.jp/entry/2014/06/09/130142][MacOSXのSayコマンドをRaspberryPiやLinuxでやろう。]]
+を参照してbashにgoogle使えるようにしてください．
+
+* 継承
+でもこれだとsay_helloはうるさいという人もいるかもしれません．
+振る舞いをそれぞれのcodeで使い分けたいところです．そこで，say_helloを組み込んだ
+新たなclassを分離しましょう．そしてあるものを使えです．
+main loopからclassを作ったように，HelloからSayHelloを作りましょう．
+
+#+begin_src ruby
+class SayHello < Hello
+  def initialize
+    super
+    say_hello(@name)
+  end
+
+  def say_hello(name)
+    greeting = "Hello #{name}"
+    system "say -v 'Samantha' #{greeting}"
+#    puts "say #{greeting}".pink
+  end
+end
+
+SayHello.new
+#+end_src
+エラーが出るでしょうね．@nameがないとか．．．
+これはclass変数と呼ばれるものです．
+こいつをsuperで投げたHello側のinitializeが作るように変更しましょう．
+
+#+begin_src ruby
+  def initialize
+    @name = gets_name
+    puts_hello(@name)
+  end
+#+end_src
+再度動かしてみてください．行った？
+
+* ファイルの命名規則
+必要なものだけ見せようというのが言語仕様の底流にあります．
+それを視覚化して見せる，見せないというのが優秀なeditorシステムの仕様になっていることは
+もうすでに理解していること(toggleです)と思います．
+記憶って限られているので，見えるものしか思い出せないんですよ．
+この記憶のコツをもう少し発展させます．
+ファイルの名前に当てはめます．
+
+求めるclassがどこにあるかを探すにはどうすればいいでしょうか？
+grepするのも一つなんですが，探す手間を省くためにファイルの命名規則としちゃおうというのが
+最先端の発想です．CoCとか命名されています．Convention over Configurationです．
+
+なんのことはない．classにしたがって，
+#+begin_example
+hello.rb     # class Hello
+say_hello.rb # class SayHello
+#+end_example
+とfileを二つ用意して，その中に対応するclassだけを置いておきます．
+そうすると，ファイルの名前を見ただけで中身が推測できます．
+こうして，記憶する手間をかけなくて良いようにしていくというのが，
+rubyの命名規則です．本当はRailsが広めたんですが．．．
+Camel caseとsnakeは知ってますよね．それを巧みに組み合わせています．
+これはrubyの掟です．
+
+こうすると付け足さないといけないことがあります．
+say_hello.rbの頭に
+#+begin_src ruby
+require "./hello"
+#+end_src
+を足してください．
+
+* 二重実行の回避
+こうすれば，
+: > ruby say_hello.rb bob
+ではsayしてくれて，
+: > ruby hello.rb bob
+ではputsするだけとなるはず．．．あれ．
+
+忘れてました．hello.rbの方に
+#+begin_src ruby
+Hello.new
+#+end_src
+を．これでできた！？
+
+よく見るとsay_helloで緑が二行になっているのわかります？
+これは，
+1. Hello.newからの出力，in hello.rbした後に，
+1. SayHello.newからの出力
+となっているのです．hello.rbを呼び出した時だけ，
+Hello.newが動いてくれるといいんですが．．．
+
+そういうのをしてくれるidiom(熟語)があります．
+#+begin_src ruby
+Hello.new if $PROGRAM_NAME == __FILE__
+#+end_src
+です．意味は，codeが書いてあるファイル名(__FILE__)が，
+動いているファイル名($PROGRAM_NAME)と
+一致したら中身を実行です．
+これはidiomなんで...覚えてください．あ，ここに書いてあるということをね．
+
+こうしてファイル名にも意味を持たせて，探す手間を省こうと言うのがprogrammerの心意気です．
+emacsのkey bindとおなじで，「怠惰であること！」が標語です．
+
+* 言い忘れた一番大事なこと
+classの隠蔽，継承とそれに関連する諸注意でした．
+
+えっと，一番大事なことを伝えるのを忘れてました．
+名前とかclassの構成とかはcodeを書くまえにあまり悩まないでください．
+掟ってのは，そのうちに身についてきます．考えてなんとかなるものではないんで．
+「下手の考え休みに似たり」です．下手がいくら考えても答えは出てきません．
+
+それよりも動くcodeをガンガン書いて行ってください．
+置き場所とか名前とかは，ここまでで示した通り，
+あとで移動させたり変更したりするものであって，
+初めから決まっているものではありません．
+設計よりも実装です．
+
+ただ，見やすくするためには「classまでもっていくべき」ということだけは意識してください．
+隠蔽，継承，多形がうまくいくとほんとうに綺麗ですから．
+
+何も考えずに書いていると「これはただしいのだろうか」という迷いが生まれてきます．
+そんなときは，
+: > rubocop hello.rb
+としてみてください．rubocopが汚いruby codeを取り締まってくれます．
+だいぶ怒られてますね．
+
+こいつを定期的にかける癖をつけておいてください．どう書いたら正しいかの
+強力な指針になります．たいがいは長すぎるとか複雑すぎると怒られます．
+そのときこそ，refactoringです．
+こいつはもうすこし上手になってからですね．
+
+rubocopにおこられたとこを直した後のを最後に示しておきます．
+#+begin_src ruby
+# in hello.rb
+class Hello
+  def initialize
+    @name = gets_name
+    puts_hello(@name)
+  end
+
+  require 'colorize'
+  def puts_hello(name)
+    puts "Hello #{name}.".green
+  end
+
+  def gets_name
+    name = ARGV[0]
+    if name.nil?
+      print "What\'s your name? "
+      name = gets.chomp
+    end
+    name
+  end
+end
+
+Hello.new if $PROGRAM_NAME == __FILE__
+#+end_src
+
+#+begin_src ruby
+require './hello'
+
+# in say_hello.rb
+class SayHello < Hello
+  def initialize
+    super
+    say_hello @name
+  end
+
+  def say_hello(name)
+    greeting = "Hello #{name}"
+    system "say -v 'Samantha' #{greeting}"
+  end
+end
+
+SayHello.new
+#+end_src
+

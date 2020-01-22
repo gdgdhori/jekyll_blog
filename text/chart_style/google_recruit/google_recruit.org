@@ -1,0 +1,122 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: Google recruit problem, exp and prime
+#+AUTHOR: Shiget R. Nishitani 2010-18
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:t num:2
+
+#+SETUPFILE: /Users/bob/.emacs.d/org-mode/theme-readtheorg.setup
+
+* Google Recruit
+: {e(自然対数の底)の値で連続する10桁の数のうち，最初の素数}
+をrubyで求めよ．ただし，e(自然対数の底)は200桁までで
+#+BEGIN_SRC 
+2.71828182845904523536028747135266249775
+7247093699959574966967627724076630353547
+5945713821785251664274274663919320030599
+2181741359662904357290033429526059563073
+81323286279434907632338298807531952510190
+#+END_SRC
+である．これをテキストにコピーして読みこませよ．
+
+
+** 解説
+グーグル、謎の人材募集広告--シリコンバレーのビルボードに　
+
+Stefanie Olsen (CNET News.com) 2004/07/12 08:40
+
+#+begin_quote
+先週、シリコンバレーの中心を走るハイウェー101沿いのビルボードに、複雑な数学の問題を載せた広告が現れた。
+
+(中略)
+この広告には、「｛eの値中の、最初の連続する10桁の素数｝.com」("{first 10 digit prime found in consecutive digits e}.com." )と書かれている。この答えの「7427466391.com」にアクセスすると、そのウェブページにはさらに別の問題(下記参照)が用意されているが、ここにもGoogleが関与していることを示すものは全くない。 この問題を解くと、Googleの研究開発部門「Google Labs」へのページに辿りつく。このページには、「Googleの構築を通して我々が学んだことの1つに、自分が何かを探しているとき、向こうも自分を探している場合のほうが見つかりやすいということがある。我々が探しているのは、世界最高のエンジニアであり、あなたこそその人なのだ」と書かれている。
+#+end_quote
+
+[[./figs/GoogleRecruit.gif]]
+
+** 解法
+各個撃破(あるいは分割統治)で解いて行く．おおまかな流れは，
+1. eの値中の、連続する10桁の数
+  1. 数の読み込み
+  1. 10桁の整数の生成
+1. 素数判定
+1. 最初の連続する10桁の素数を捜す
+である．
+** 素数判定
+  素数判定を原理から実現せよ．ある数nが素数かどうかは，
+  : 自分自身の数nと1以外の数で割りきれないかどうか                                                                      
+  で判定される．
+  1. 割り算の余り(剰余)は%で求まる．
+  1. 2からn-1までの数でnを次々と割っていき，
+  1. 割り切れたところでループをbreak．
+  1. 適当にたてた番兵（変数名warden）を見てloopが最後までまわっているかどうかで，
+  1. 素数(prime number)かどうかを判定すればよい.
+
+** メソッド化:check_prime_method
+前節で求めた素数判定プログラムをmethodにせよ．test部は
+#+begin_src
+expected = [1,2,3,5,7,11,13,17,19,23,29,31,37,41,43,47,53,59,61,67,71,73,79,83,89,97]
+[*2..100].each do |num|
+  p num if prime?(num)
+end
+#+end_src
+
+つまり関数prime?は，素数ならtrue, 素数でなければfalseを返す．
+
+** ヒント１：expの読み込み
+テキストの読み込みは，
+
+#+begin_example
+[BobsNewPBG4-6:~/Ruby/google] bob% cat google.rb
+exp1=gets.to_s.chomp
+puts exp1
+[BobsNewPBG4-6:~/Ruby/google] bob% ruby google.rb < exp.txt
+2.71828182845904523536028747...
+#+end_example
+exp.txtの内容を"<"で読み込ませている．
+** ヒント２：文字から数字の表示
+文字列exp1を配列とみなして ~exp1[0]~ などで表示させようとすると失敗する．
+ここで出てくるのはasciiコードの番号．そこで，chrで表示させる．
+#+begin_example
+[BobsNewPBG4-6:~/Ruby/google] bob% cat google2.rb
+exp1=gets.to_s.chomp
+puts exp1
+puts exp1[0]
+puts exp1[1]
+puts exp1[2].chr
+puts exp1[3].chr.to_i
+puts exp1[3..12].to_i
+[BobsNewPBG4-6:~/Ruby/google] bob% ruby google2.rb < exp.txt
+2.71828182845904523536028747135266...
+50
+46
+7
+1
+1828182845
+#+end_example
+
+もっと簡単には最後のputs exp1[3..12].to_i でいいが，これは後の問題でつかえないのでもうすこしちまちま作る．
+** ヒント３：素数判定の高速化
+素数判定programのloopの範囲2..i_maxにおいて，i_max=nではなく，i_max=Math::sqrt(n)にすれば高速化される．なぜか考えよ．
+#+begin_example
+time ruby Google.rb < exp.txt
+99:7427466391
+123:7413596629
+149:6059563073
+171:3490763233
+182:2988075319
+0.862u 0.007s 0:00.87 98.8%	0+0k 0+0io 0pf+0w
+#+end_example
+
+3rd_dayあるいは4th_dayで作った，2..n-1のloopでは終わらない．
+
+* 類題
+Congratulations. You've made it to level 2. Go to www.Linux.org and enter Bobsyouruncle as the login and the answer to this equation as the password.
+#+BEGIN_SRC 
+f(1)=7182818284
+f(2)=8182845904
+f(3)=8747135266
+f(4)=7427466391
+f(5)=__________
+#+END_SRC

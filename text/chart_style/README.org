@@ -1,0 +1,78 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: チャート式Ruby
+#+AUTHOR: Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:t num:2
+
+#+SETUPFILE: /Users/bob/.emacs.d/org-mode/theme-readtheorg.setup
+
+* 概要
+rubyの初心者向け教科書があまりに中途半端なので，自分で書くことにしました．
+これは，ruby = TDD + English という図式が自分の中で出来上がって，
+でも，それをうまく学生に伝えることができないので，なんとかしたいからです．
+
+学生の変容が怖いです．プログラミングをやる前は，ほとんどの学生が一年程度で
+身につくと思っているのに，4年後の生態を見るとほとんどが答えのcopy & pasteです．
+そして，programmingがいやになって去って行く学生が多くいます．
+
+ところが，突然変異的にできる学生がいます．
+彼らは，教えなくてもできるようです．
+何が違うのだろう．．．
+最初から違うのではないかというのが，私の感想です．
+
+数学の問題を解くときに試行錯誤しなさいと言いますが，
+その試行錯誤のやり方を本当に教えているのだろうかという点です．
+解答を丸写しする学生は，動作が理解できません．
+理解するために，解答を分解して打ち込んで行くことが
+できないのでしょうね．
+
+プログラミング言語を学ぶというのではなく，
+文章を考えるようにcodingして行くというのが，
+chart式rubyの目標です．
+
+* chart式の体裁と内容
+chart式と言った時，
+「たくさんの問題をずらずら解いて行くこと」
+と思っている研究者がいて驚きました．
+chart式の本質はそこではなく，
+1. 簡単な解説
+1. 詳しい解法
+1. 類題での確認
+です．この基本に沿って
+
+1. [[./c1_puts.org][c1_puts.org]] 出力のみ,先ずはhello worldでしょ
+1. [[./c2_name_method_hello.org][c2_name_method_hello.org]] method, Kent Beckの至言がある
+1. [[./c3_if_case_leap_year.org][c3_if_case_leap_year.org]] TDDでcaseまで
+1. [[./c4_assert_equal.org][c4_assert_equal.org]] gem, colorizeの継承, require, 重複実行の予防
+1. [[././c5_fibonacci.org][c5_fibonacci.org]] recursion(再帰)をtestで
+1. [[././c6_roman_numerals.org][c6_roman_numerals.org]] 仕上げ問題
+なんかでしょうか．そしてclassへ行く．
+
+* class導入の手順
+えっと，てっぺんのorgではclass導入は別立てになっていますが，
+初心者には納得してもらうためにここまで進んだ人にテキストを提供しましょう．
+
+- fibonacciのclass化，Integerのover ride
+- roman numeralsのintegerのover write
+- initialize
+- self, methods
+- attr_accessor
+
+* 学生の作業
+学生が類題を独自に解いたかどうかをどうやって判定するかが問題になります．
+- tddのred状態を残す
+- green状態を残す
+- refactoringを晒す
+というのが一つの解になるのではと期待しています．
+まさに，gitのlog状態．．．うーーーん．そこを残すのは．．．
+
+**  文書作成
+- 学習者自らが文書を作成するというのをやってみてください．
+- 自分の書いたcodeを表示させるというやり方です．
+- 卒論を仕上げるのと同じようにして，文書を書くという作業を通じて，codeを覚えていくというものです．
+- platexと違って，html outはどんな環境でもできるのでそいつを使います．
+
+
+

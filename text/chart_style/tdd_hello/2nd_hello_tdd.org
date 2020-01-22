@@ -1,0 +1,167 @@
+#+TITLE:  second lesson for ruby novice -- hello method with tdd --
+#+AUTHOR:  Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:2 num:2
+#+SETUPFILE: /Users/bob/.emacs.d/org-mode/theme-readtheorg.setup
+
+#+STARTUP: indent 
+#+OPTIONS: ^:{}
+
+* 答えを先に
+** 振る舞いを考える
+methodで隠蔽するというのはわかりましたでしょうか？
+さらに，うまいこと単語を選べばコードが読み易くなります．
+
+今日は，codingを強力に進めるテスト駆動を入れていきます．
+それには，自然言語を駆使しましょう．
+英語でhelloの会話を考えましょう．
+#+begin_example
+Hi, What's your name?
+bob.
+Hello, bob. Nice to meet you.
+#+end_example
+ですよね．
+
+これを分析すると，
+1. greetings
+1. gets name
+1. hello name
+って感じでしょ．
+
+そういう風にmethodを作っていきましょう．
+** まずは，greetings
+#+begin_example ruby
+> emacs hello_tdd.rb
+greetings # C-x C-s C-z
+> ruby hello_tdd.rb
+#+end_example
+として動かしてみましょう．そうすると
+#+begin_example
+hello_tdd.rb:1:in `<main>': undefined local variable or method `greetings' for main:Object (NameError)
+#+end_example
+と返ってきますよね．greetingsというmethodがないよ．
+では，作ります．
+#+begin_example
+> fg
+def greetings
+end
+#+end_example
+そうするとエラーはなくなります．でも，何も表示されないですよね．
+そこで，振る舞いを持たせて，
+#+begin_example
+def greetings
+  puts "Hello. I\'m mac. Who are you?"
+end
+#+end_example
+これでgreetingsの完成です．
+
+** 次は，gets name
+ですが，これを書いちゃうと
+#+begin_example
+name = gets.chomp
+#+end_example
+となります．
+
+** 最後はhello name
+です．そのまま書くと，
+#+begin_example
+name = gets.chomp
+hello name
+#+end_example
+: hello_tdd.rb:7:in `<main>': undefined method `hello' for main:Object (NoMethodError)
+と怒られます．そこでhello methodを作っていきます．
+少し試行錯誤すると，
+#+begin_src ruby
+def hello(name)
+  puts "Hello #{name}.  How are you?"
+end
+#+end_src
+とでもなったでしょうか．
+
+* TDD
+** codingの最終目標
+こういうcodingの仕方はTDD(Test Driven Development:テスト駆動開発)
+と呼ばれています．
+
+- テストを作る
+- エラーを出す(red)
+- エラーをなくす(green)
+- codeを綺麗にする(refactoring)
+です．codingの最終目標は
+: clean code that works
+動く綺麗なコードを作ることです．
+えっと，もし，あなたが，
+- codeを書くまえに設計すべき
+- コピペは悪
+なんていう，マントラを信じているなら
+このprogramming styleを提唱し始めたKent Beckの文章を
+載せておきます．よーーく心に刻んでください．
+もしあなたがプログラミング嫌いならば，
+少し心が晴れると思いますよ．俺のせいじゃないって．
+
+** clean code that works
+TDD by Example (Kent Beck) p.13
+#+begin_quote
+目指すのは，動作するきれいなコードだ
+(このRon Jeffriesの簡潔な表現は素晴らしい).
+動作するきれいなコードは，偉大なプログラマでも
+すぐには書けないことがあるし，
+普通のプログラマならなおさらだ(私もそうだ)．
+ここは分割統治しよう．
+最初に「動作する」に取り組み，
+その後で「きれいな」に取り組む．
+この方法はアーキテクチャ駆動とは正反対だ．
+アーキテクチャ駆動は「きれいな」に最初に取り組み，
+そのうえで苦心してあちこち設計の辻褄を
+合わせながらどうにか「動作する」を実現させる．
+#+end_quote
+** phases and speed
+TDD by Example (Kent Beck) p.30
+#+begin_quote
+グリーンバーを出す小さなステップはどんなものだろうか．
+Dollarクラスを丸ごとコピーして，
+DollarをFrancに書き換えるのはどうだろう．
+
+ちょっと待った．
+これで唾棄すべき糞コードの出来上がりだと
+あざ笑う声が聞こえる．
+その声は続けて言う．
+コピー&ペーストによる再利用は
+抽象化の敗北であり，きれいな設計を殺すと．
+
+イラっとしただろうか．なら深呼吸だ．
+鼻から息を吸い込んで，3秒止めて口から吐き出す．
+オーケー？
+さて，サイクルにはフェーズがあることを思い出してほしい
+(中には数秒で通り過ぎるものもあるが，フェーズはフェーズだ)．
+1. テストを書く．
+1. コンパイラを通す．
+1. テストを走らせ，失敗を確認する．
+1. テストを通す．
+1. 重複を排除する．
+
+
+各フェーズにはフェーズなりの目的と解決法があり，
+価値観も異なっている．
+最初の３つのフェーズはなるべく速く通過して，
+新しい機能がどの状態にあるのかわかるところまで行きたい．
+そこにたどり着くためには，どのような罪をおかしてもよい．
+その短い時間だけは，速度が設計よりも重要だからだ．
+
+１つ心配なのは，私がここに書いていることが，
+良い設計の原則を無視してよいという免罪符になってしまうことだ．
+チームに対して
+「Kent Beckが設計なんてどうでもいいって書いてたよ」
+などと言い始めるのは，ちょっと待ってほしい．
+サイクルはまだ終わっていない．
+4つ足のアーロンチェアは倒れる．
+最初の4つのステップは，5つ目がなければ無意味だ．
+正しい設計を，正しいタイミングで行う．
+動かしてから，正しくする．
+
+ここまで言っておけば安心だろう．
+これで読者の皆さんは重複を排除するまで
+誰にもコードを見せないはずだ
+(ただし，ペアプロ相手は除く)
+#+end_quote

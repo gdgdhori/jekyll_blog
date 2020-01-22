@@ -1,0 +1,695 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="jp" xml:lang="jp">
+<head>
+<!-- 2019-10-07 月 11:24 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>first lesson for ruby novice &#x2013; hello method --</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Shigeto R. Nishitani" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/styles/readtheorg/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/styles/readtheorg/js/readtheorg.js"></script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2018 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">first lesson for ruby novice &#x2013; hello method --</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org7f4cec0">1. class化</a></li>
+<li><a href="#orgd7dfeb8">2. 隠蔽工作</a></li>
+<li><a href="#org3ac489c">3. colorize-出色の継承-</a></li>
+<li><a href="#orgcf3bbc2">4. say_hello</a></li>
+<li><a href="#orgb0f0618">5. 継承</a></li>
+<li><a href="#orge1589fb">6. ファイルの命名規則</a></li>
+<li><a href="#orgc42bba7">7. 二重実行の回避</a></li>
+<li><a href="#org787aebc">8. 言い忘れた一番大事なこと</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7f4cec0" class="outline-2">
+<h2 id="org7f4cec0"><span class="section-number-2">1</span> class化</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+オブジェクト指向というのを聞いたことがあると思います．
+このキーとなる考え方が，
+</p>
+<ul class="org-ul">
+<li>隠蔽(capsulation)</li>
+<li>継承(inheritance)</li>
+<li>多形(polymorphism)</li>
+</ul>
+<p>
+です．methodにするのはある種の隠蔽なんですが，
+さらに言語のシステムとして徹底したのが，classです．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd7dfeb8" class="outline-2">
+<h2 id="orgd7dfeb8"><span class="section-number-2">2</span> 隠蔽工作</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+先ほどのhello.rbをもう一度見てください．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">puts_hello</span> name...<span style="font-weight: bold;">end</span>
+
+<span style="font-weight: bold;">def</span> <span style="font-weight: bold;">gets_name...end</span>
+
+name = gets_name
+puts_hello name
+</pre>
+</div>
+<p>
+main loopがありますよね．「こいつも消せないか？」というのがclassの発想です．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Hello</span>
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">initialize</span>
+    name = gets_name
+    puts_hello name
+  <span style="font-weight: bold;">end</span>
+
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">puts_hello</span> name
+    puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{name}</span><span style="font-style: italic;">."</span>
+  <span style="font-weight: bold;">end</span>
+
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">gets_name</span>
+    name = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0]
+    <span style="font-weight: bold;">if</span> name == <span style="font-weight: bold; font-style: italic;">nil</span>
+      puts <span style="font-style: italic;">"What\'s your name?"</span>
+      name = gets.chomp
+    <span style="font-weight: bold;">end</span>
+    <span style="font-weight: bold;">return</span> name
+  <span style="font-weight: bold;">end</span>
+<span style="font-weight: bold;">end</span>
+
+<span style="font-weight: bold; text-decoration: underline;">Hello</span>.new
+</pre>
+</div>
+
+<pre class="example">
+&gt; ruby hello.rb
+
+</pre>
+<p>
+としてみてください．同じでしょ．同じなんですよ．
+さらにcursorをclassという単語の直後に持ってきてC-c C-hしてみてください．
+綺麗でしょ．表示させるのはC-c C-sです．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3ac489c" class="outline-2">
+<h2 id="org3ac489c"><span class="section-number-2">3</span> colorize-出色の継承-</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+継承を具体化したものにはいくつもありますが，出色なのはcolorizeです．
+ちょっと例を見てみましょう．
+</p>
+
+<p>
+colorizeはgemなんで，installが必要かもしれません．なに，
+</p>
+<pre class="example">
+&gt; gem install colorize
+
+</pre>
+<p>
+するだけです．関学のproxyで引っかかっている人は，
+</p>
+<pre class="example">
+&gt; gem install colorize -r -p http://proxy.ksc.kwansei.ac.jp:8080
+
+</pre>
+<p>
+してください．
+</p>
+
+<p>
+これを使います．puts_helloを書き換えます．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">require <span style="font-style: italic;">'colorize'</span>
+<span style="font-weight: bold;">def</span> <span style="font-weight: bold;">puts_hello</span> name
+  puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{name}</span><span style="font-style: italic;">."</span>.green
+<span style="font-weight: bold;">end</span>
+</pre>
+</div>
+<p>
+どうよ．出色でしょ．色々出せますんで，試してみてください．
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby">&gt; irb
+irb(main)<span style="font-weight: bold; text-decoration: underline;">:001</span>:0&gt; require <span style="font-style: italic;">'colorize'</span>
+=&gt; <span style="font-weight: bold; font-style: italic;">true</span>
+irb(main)<span style="font-weight: bold; text-decoration: underline;">:002</span>:0&gt; <span style="font-weight: bold; text-decoration: underline;">String</span>.colors
+=&gt; [<span style="font-weight: bold; text-decoration: underline;">:black</span>, <span style="font-weight: bold; text-decoration: underline;">:light_black</span>, <span style="font-weight: bold; text-decoration: underline;">:red</span>, <span style="font-weight: bold; text-decoration: underline;">:light_red</span>, <span style="font-weight: bold; text-decoration: underline;">:green</span>, <span style="font-weight: bold; text-decoration: underline;">:light_green</span>, <span style="font-weight: bold; text-decoration: underline;">:yellow</span>, <span style="font-weight: bold; text-decoration: underline;">:light_yellow</span>, <span style="font-weight: bold; text-decoration: underline;">:blue</span>, <span style="font-weight: bold; text-decoration: underline;">:light_blue</span>, <span style="font-weight: bold; text-decoration: underline;">:magenta</span>, <span style="font-weight: bold; text-decoration: underline;">:light_magenta</span>, <span style="font-weight: bold; text-decoration: underline;">:cyan</span>, <span style="font-weight: bold; text-decoration: underline;">:light_cyan</span>, <span style="font-weight: bold; text-decoration: underline;">:white</span>, <span style="font-weight: bold; text-decoration: underline;">:light_white</span>, <span style="font-weight: bold; text-decoration: underline;">:default</span>]
+</pre>
+</div>
+<p>
+colorizeは，本当の意味での継承ではなく，ruby標準のStringを上載せ(override)します．
+こんなのがすぐに使えて色々あるのがrubyです．いや，object思考です．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcf3bbc2" class="outline-2">
+<h2 id="orgcf3bbc2"><span class="section-number-2">4</span> say_hello</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+色だけだと大したimpactを普通の人には与えません．では．．．
+</p>
+
+<p>
+喋らしてみましょう．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">initialize</span>
+  name = gets_name
+  puts_hello name
+  say_hello name
+<span style="font-weight: bold;">end</span>
+
+<span style="font-weight: bold;">def</span> <span style="font-weight: bold;">say_hello</span> name
+  greeting = <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{name}</span><span style="font-style: italic;">"</span>
+  system <span style="font-style: italic;">"say -v 'Samantha' </span><span style="font-weight: bold; font-style: italic;">#{greeting}</span><span style="font-style: italic;">"</span>
+<span style="font-weight: bold;">end</span>
+</pre>
+</div>
+<p>
+どうよ．systemというのはシステムに命令を投げているだけです．
+ですんで，これはrubyがすごいんじゃなくて，osxにsayというcommandがあって，
+そいつがすごいんですよ．
+</p>
+
+<p>
+詳しい使い方は，<a href="https://qiita.com/daddygongon/items/015776289372057dd6a7">OSXのterminalのsayで多言語をしゃべらせてみる</a> にあります．
+「いいね」をポチッとしましょう!!!
+</p>
+
+<p>
+多分linuxでもいけるはずです．ダメな時やwinさんたちは，
+</p>
+<ul class="org-ul">
+<li><a href="http://takuya-1st.hatenablog.jp/entry/2014/06/09/130142">MacOSXのSayコマンドをRaspberryPiやLinuxでやろう。</a></li>
+</ul>
+<p>
+を参照してbashにgoogle使えるようにしてください．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb0f0618" class="outline-2">
+<h2 id="orgb0f0618"><span class="section-number-2">5</span> 継承</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+でもこれだとsay_helloはうるさいという人もいるかもしれません．
+振る舞いをそれぞれのcodeで使い分けたいところです．そこで，say_helloを組み込んだ
+新たなclassを分離しましょう．そしてあるものを使えです．
+main loopからclassを作ったように，HelloからSayHelloを作りましょう．
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">SayHello</span> &lt; <span style="font-weight: bold; text-decoration: underline;">Hello</span>
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">initialize</span>
+    <span style="font-weight: bold;">super</span>
+    say_hello(<span style="font-weight: bold; font-style: italic;">@name</span>)
+  <span style="font-weight: bold;">end</span>
+
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">say_hello</span>(name)
+    greeting = <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{name}</span><span style="font-style: italic;">"</span>
+    system <span style="font-style: italic;">"say -v 'Samantha' </span><span style="font-weight: bold; font-style: italic;">#{greeting}</span><span style="font-style: italic;">"</span>
+<span style="font-weight: bold; font-style: italic;">#    </span><span style="font-weight: bold; font-style: italic;">puts "say </span><span style="font-weight: bold; font-style: italic;">#{greeting}</span><span style="font-weight: bold; font-style: italic;">".pink</span>
+  <span style="font-weight: bold;">end</span>
+<span style="font-weight: bold;">end</span>
+
+<span style="font-weight: bold; text-decoration: underline;">SayHello</span>.new
+</pre>
+</div>
+<p>
+エラーが出るでしょうね．@nameがないとか．．．
+これはclass変数と呼ばれるものです．
+こいつをsuperで投げたHello側のinitializeが作るように変更しましょう．
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold;">def</span> <span style="font-weight: bold;">initialize</span>
+  <span style="font-weight: bold; font-style: italic;">@name</span> = gets_name
+  puts_hello(<span style="font-weight: bold; font-style: italic;">@name</span>)
+<span style="font-weight: bold;">end</span>
+</pre>
+</div>
+<p>
+再度動かしてみてください．行った？
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge1589fb" class="outline-2">
+<h2 id="orge1589fb"><span class="section-number-2">6</span> ファイルの命名規則</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+必要なものだけ見せようというのが言語仕様の底流にあります．
+それを視覚化して見せる，見せないというのが優秀なeditorシステムの仕様になっていることは
+もうすでに理解していること(toggleです)と思います．
+記憶って限られているので，見えるものしか思い出せないんですよ．
+この記憶のコツをもう少し発展させます．
+ファイルの名前に当てはめます．
+</p>
+
+<p>
+求めるclassがどこにあるかを探すにはどうすればいいでしょうか？
+grepするのも一つなんですが，探す手間を省くためにファイルの命名規則としちゃおうというのが
+最先端の発想です．CoCとか命名されています．Convention over Configurationです．
+</p>
+
+<p>
+なんのことはない．classにしたがって，
+</p>
+<pre class="example">
+hello.rb     # class Hello
+say_hello.rb # class SayHello
+</pre>
+<p>
+とfileを二つ用意して，その中に対応するclassだけを置いておきます．
+そうすると，ファイルの名前を見ただけで中身が推測できます．
+こうして，記憶する手間をかけなくて良いようにしていくというのが，
+rubyの命名規則です．本当はRailsが広めたんですが．．．
+Camel caseとsnakeは知ってますよね．それを巧みに組み合わせています．
+これはrubyの掟です．
+</p>
+
+<p>
+こうすると付け足さないといけないことがあります．
+say_hello.rbの頭に
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby">require <span style="font-style: italic;">"./hello"</span>
+</pre>
+</div>
+<p>
+を足してください．
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc42bba7" class="outline-2">
+<h2 id="orgc42bba7"><span class="section-number-2">7</span> 二重実行の回避</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+こうすれば，
+</p>
+<pre class="example">
+&gt; ruby say_hello.rb bob
+
+</pre>
+<p>
+ではsayしてくれて，
+</p>
+<pre class="example">
+&gt; ruby hello.rb bob
+
+</pre>
+<p>
+ではputsするだけとなるはず．．．あれ．
+</p>
+
+<p>
+忘れてました．hello.rbの方に
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold; text-decoration: underline;">Hello</span>.new
+</pre>
+</div>
+<p>
+を．これでできた！？
+</p>
+
+<p>
+よく見るとsay_helloで緑が二行になっているのわかります？
+これは，
+</p>
+<ol class="org-ol">
+<li>Hello.newからの出力，in hello.rbした後に，</li>
+<li>SayHello.newからの出力</li>
+</ol>
+<p>
+となっているのです．hello.rbを呼び出した時だけ，
+Hello.newが動いてくれるといいんですが．．．
+</p>
+
+<p>
+そういうのをしてくれるidiom(熟語)があります．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold; text-decoration: underline;">Hello</span>.new <span style="font-weight: bold;">if</span> <span style="font-weight: bold; font-style: italic;">$PROGRAM_NAME</span> == __FILE__
+</pre>
+</div>
+<p>
+です．意味は，codeが書いてあるファイル名(<span class="underline"><span class="underline">FILE</span></span>)が，
+動いているファイル名($PROGRAM_NAME)と
+一致したら中身を実行です．
+これはidiomなんで&#x2026;覚えてください．あ，ここに書いてあるということをね．
+</p>
+
+<p>
+こうしてファイル名にも意味を持たせて，探す手間を省こうと言うのがprogrammerの心意気です．
+emacsのkey bindとおなじで，「怠惰であること！」が標語です．
+</p>
+</div>
+</div>
+
+<div id="outline-container-org787aebc" class="outline-2">
+<h2 id="org787aebc"><span class="section-number-2">8</span> 言い忘れた一番大事なこと</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+classの隠蔽，継承とそれに関連する諸注意でした．
+</p>
+
+<p>
+えっと，一番大事なことを伝えるのを忘れてました．
+名前とかclassの構成とかはcodeを書くまえにあまり悩まないでください．
+掟ってのは，そのうちに身についてきます．考えてなんとかなるものではないんで．
+「下手の考え休みに似たり」です．下手がいくら考えても答えは出てきません．
+</p>
+
+<p>
+それよりも動くcodeをガンガン書いて行ってください．
+置き場所とか名前とかは，ここまでで示した通り，
+あとで移動させたり変更したりするものであって，
+初めから決まっているものではありません．
+設計よりも実装です．
+</p>
+
+<p>
+ただ，見やすくするためには「classまでもっていくべき」ということだけは意識してください．
+隠蔽，継承，多形がうまくいくとほんとうに綺麗ですから．
+</p>
+
+<p>
+何も考えずに書いていると「これはただしいのだろうか」という迷いが生まれてきます．
+そんなときは，
+</p>
+<pre class="example">
+&gt; rubocop hello.rb
+
+</pre>
+<p>
+としてみてください．rubocopが汚いruby codeを取り締まってくれます．
+だいぶ怒られてますね．
+</p>
+
+<p>
+こいつを定期的にかける癖をつけておいてください．どう書いたら正しいかの
+強力な指針になります．たいがいは長すぎるとか複雑すぎると怒られます．
+そのときこそ，refactoringです．
+こいつはもうすこし上手になってからですね．
+</p>
+
+<p>
+rubocopにおこられたとこを直した後のを最後に示しておきます．
+</p>
+<div class="org-src-container">
+<pre class="src src-ruby"><span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">in hello.rb</span>
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">Hello</span>
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">initialize</span>
+    <span style="font-weight: bold; font-style: italic;">@name</span> = gets_name
+    puts_hello(<span style="font-weight: bold; font-style: italic;">@name</span>)
+  <span style="font-weight: bold;">end</span>
+
+  require <span style="font-style: italic;">'colorize'</span>
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">puts_hello</span>(name)
+    puts <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{name}</span><span style="font-style: italic;">."</span>.green
+  <span style="font-weight: bold;">end</span>
+
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">gets_name</span>
+    name = <span style="font-weight: bold; text-decoration: underline;">ARGV</span>[0]
+    <span style="font-weight: bold;">if</span> name.nil?
+      print <span style="font-style: italic;">"What\'s your name? "</span>
+      name = gets.chomp
+    <span style="font-weight: bold;">end</span>
+    name
+  <span style="font-weight: bold;">end</span>
+<span style="font-weight: bold;">end</span>
+
+<span style="font-weight: bold; text-decoration: underline;">Hello</span>.new <span style="font-weight: bold;">if</span> <span style="font-weight: bold; font-style: italic;">$PROGRAM_NAME</span> == __FILE__
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ruby">require <span style="font-style: italic;">'./hello'</span>
+
+<span style="font-weight: bold; font-style: italic;"># </span><span style="font-weight: bold; font-style: italic;">in say_hello.rb</span>
+<span style="font-weight: bold;">class</span> <span style="font-weight: bold; text-decoration: underline;">SayHello</span> &lt; <span style="font-weight: bold; text-decoration: underline;">Hello</span>
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">initialize</span>
+    <span style="font-weight: bold;">super</span>
+    say_hello <span style="font-weight: bold; font-style: italic;">@name</span>
+  <span style="font-weight: bold;">end</span>
+
+  <span style="font-weight: bold;">def</span> <span style="font-weight: bold;">say_hello</span>(name)
+    greeting = <span style="font-style: italic;">"Hello </span><span style="font-weight: bold; font-style: italic;">#{name}</span><span style="font-style: italic;">"</span>
+    system <span style="font-style: italic;">"say -v 'Samantha' </span><span style="font-weight: bold; font-style: italic;">#{greeting}</span><span style="font-style: italic;">"</span>
+  <span style="font-weight: bold;">end</span>
+<span style="font-weight: bold;">end</span>
+
+<span style="font-weight: bold; text-decoration: underline;">SayHello</span>.new
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Shigeto R. Nishitani</p>
+<p class="date">Created: 2019-10-07 月 11:24</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

@@ -1,0 +1,205 @@
+#+TITLE:  first lesson for ruby novice -- hello method --
+#+AUTHOR:  Shigeto R. Nishitani
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:2 num:2
+#+SETUPFILE: /Users/bob/Github/ornb/lib/theme-readtheorg.setup
+
+#+STARTUP: indent 
+#+OPTIONS: ^:{}
+
+* coding原則に対する基本的見解
+いくつかの言語でcodingしてきて，rubyが本当にすんなり腑に落ちているのですが，
+なぜかを考えるとよくわかりませんでした．この頃気がついたことがあるので，
+それに従ったrubyの学習を進めて見ます．
+
+* 場所の記憶と自然言語
+筆者は記憶がすごく苦手です．人の名前とか，電話番号とかほとんど覚えていません．
+昔は，「画像記憶が得意やからいいやん」とか思ってたんですが，人の顔の見分けも
+つかんようになってきたんで，これもダメみたいです．
+
+で，残ったのは何かというと
+　「場所の記憶と自然言語」
+です．webだとどこのボタンをクリックして，とかこの画面の右上の方とか覚えてますよね．
+あるいは，英単語は比較的覚えています．
+
+Actaってのがありました．outlinerの走りなんですが，そこで発明されたのが，
+toggle表示(folding, hide)です．それまではMac OSがGUIの走りのはずで
+そのデフォルトはアイコンでした．それがいつの間にかtoggle表示が当たり前に
+なったんですが，そのメタファがプログラミングでも実践されていて．．．
+さらにemacsのorg-modeなんかになるとそれが徹底されてきています．
+
+そこでさらにmy_helpが私の中では最新なんですが，それはまた別の話．
+まずはtoggleがどうcodingに効くかというところから進めていきます．
+
+* hello world
+まずはお決まりからいきましょう．hello worldです．
+
+: > emacs hello.rb
+
+でeditorを起動して，次のcode
+#+begin_src ruby +n
+puts "Hello world."
+#+end_src
+
+を打ち込んで保存しましょう(C-x C-s, C-z)．動かしてみると
+
+: > ruby hello.rb
+
+ちゃんと動いています？　codeを書いていくコツは「チラ見」です．
+一行書いたら動かしてみるという癖をつけましょう．
+
+* 振る舞いを持たす
+もう少し，このアプリに振る舞いを追加しましょう．
+対話的するために，先ほどの命令の後ろに引数をつけて，
+名前を返しくれると嬉しいでしょ？
+
+#+BEGIN_EXAMPLE
+> ruby hello.rb bob
+Hello bob.  Nice to see you.
+#+END_EXAMPLE
+なんてね．
+
+これを実装すると
+#+begin_src ruby +n
+puts "Hello #{ARGV[0]}."
+#+end_src
+になります．そうこれでいいんですが，もう少し高尚な感じで．．．
+
+#+BEGIN_SRC ruby +n
+tmp1 = ARGV[0]
+puts "Hello #{tmp1}."
+#+END_SRC
+とでもしましょう．
+
+* 言語は英語から
+これをmethodにしたら，
+
+#+BEGIN_SRC ruby
+def func(hoge)
+  puts "Hello #{hoge}."
+end
+
+hoho = ARGV[0]
+func(hoho)
+#+END_SRC
+
+これを動かしてみましょう．
+
+: > ruby hello.rb bob
+
+とちゃんと動きます．これでは何をしているのかわからないので，
+コメントをつけましょう．
+
+#+BEGIN_SRC ruby
+# method: func
+# input:  hoge is a name
+# output: puts greetings
+# return: nil
+def func(hoge)
+  puts "Hello #{hoge}."
+end
+
+honya = ARGV[0] # get hoho from argv
+func(honya) # call hello with a name honya
+#+END_SRC
+
+英語でしっかりとコメントが書ければ世界中に通用するcodeが書ける...
+んでしょうかね？
+コメントをぐちゃぐちゃ書くんじゃなくて，
+もっとわかりやすい名前（method名，変数名）
+にしたくなるでしょう？
+
+#+BEGIN_SRC ruby
+def puts_hello name
+  puts "Hello #{name}."
+end
+
+name = ARGV[0]
+puts_hello name
+#+END_SRC
+
+こっちの方が短くてスッキリしていて圧倒的にいいでしょ？　
+適切な英単語を使えば，要らん説明が省けます．
+これが言語は英語からという意味です．
+
+* 長くなったら，隠せ
+もしoptionのnameを打つのを忘れたら，
+問い合わせてくれると，
+user interfaceという感じがもっとするでしょう？
+
+#+BEGIN_SRC ruby
+name = ARGV[0]
+if name == nil
+  puts "What\'s your name?"
+  name = gets.chomp
+end
+#+END_SRC
+というのをname=の下につけましょう[1]．ちょっと動かして見ましょう．
+
+: > ruby hello.rb
+
+意図通りに動いていますか？　でもmain loopが長くなってきちゃいました．
+そこで，これもmethodに切り出します．
+領域を指定して(C-spaceで先頭を指定して移動),C-wでcut, 移動してC-yでyankです．
+#+BEGIN_SRC ruby
+def gets_name
+  name = ARGV[0]
+  if name == nil
+    puts "What\'s your name?"
+    name = gets.chomp
+  end
+  return name
+end
+
+name = gets_name
+#+END_SRC
+この時，領域を指定してM-x indent-regionとしてください．あるいはC-x TAB.
+これだけでもだいぶ読みやすくなったでしょ？
+
+もっとできます．
+main loopにcursorを持って行って，'C-c @ C-l'と打ってみてください．
+
+#+BEGIN_SRC ruby
+def puts_hello name...end
+
+def gets_name...end
+
+name = gets_name
+puts_hello name
+#+END_SRC
+
+これがoutlineによるtoggle表示からきたすごいメタファなんですよ．
+何をしているのか知らなくていい部分は隠してしまおうというのが，
+methodに切り分ける理由なんです．
+
+* 今日の教え=1=- red green refactoring -
+codingの基本操作を振り返っておきます．
+- 仕様 : 振る舞いを決めて，
+- 実装 : code書いて，
+- テスト : 確認して，
+- リファクト : 修正していく．
+これの繰り返しです．この流れを表す
+#+begin_src bash
+ red green refactoring
+#+end_src
+という標語があります．忘れないでね．
+* 今日の教え=2=- editor -
+ここで示した優秀なeditorのmeritは納得いただけましたでしょうか？
+必須操作を少しだけリストアップしておくと，
+1. editのkey-bind
+1. syntax high_lighting
+1. code hiding, show
+1. block copy, 移動
+1. query-replace
+1. shellとの連携
+
+* Footnotes
+
+[1] えっと，windowsで mingw64の最新版だと挙動不審です．
+: $stdout.sync = true
+をcodeの一番最初に入れてください．そうすると動きます．なんでかはむずいな．
+
+
+
+

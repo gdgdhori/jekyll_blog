@@ -1,0 +1,217 @@
+#+OPTIONS: ^:{}
+#+STARTUP: indent nolineimages
+#+TITLE: テスト駆動でFibonacci -- fib(n) = fib(n-1)+fib(n-2)
+#+AUTHOR: 西谷滋人
+#+EMAIL:     (concat "nishitani@kwansei.ac.jp")
+#+LANGUAGE:  jp
+#+OPTIONS:   H:4 toc:t num:2
+
+#+SETUPFILE: ~/.emacs.d/org-mode/theme-readtheorg.setup
+
+* TDD一番め
+Fibonacci数列
+: fib(n) = fib(n-1)+fib(n-2)
+: 0 1 1 2 3 5 8 13 21 ...
+をrecursion(再帰的)で求める問題をTDDで解いていく様子を示します．
+assert_equal.rbをcodesにcopyしておいてください．
+
+以下はTDDのバイブルのKent Beck本に載っていたののアレンジです．
+* fib(0) = 0
+Fibonacci数列の初項は0です．
+まずは表示させてみます．
+#+begin_src ruby
+p fib(0)
+#+end_src
+ないよね．
+
+そこで，defします．
+#+begin_src ruby
+def fib(n)
+  if n==0
+    return 0
+  end
+end
+#+end_src
+
+assert_equal.rbのassertion(確認)を試しておきます．
+#+begin_src ruby
+require './assert_equal'
+puts assert_equal(0, fib(0))
+#+end_src
+
+* fib(1) =1
+次はfib(1)=1
+
+まずはassertion
+#+begin_src ruby 
+puts assert_equal(1, fib(1))
+#+end_src
+もちろん失敗するが．．．
+まずはコピペ．
+#+begin_src ruby
+def fib(n)
+  if n==0
+    return 0
+  end
+  if n==1
+    return 1
+  end
+end
+#+end_src
+これで通る．
+
+テスト側の重複が気になってきたので，配列にしよう．
+#+begin_src ruby
+[[0,0],[1,1]].each do |pair|
+  puts assert_equal(pair[0], fib(pair[1]))
+end
+#+end_src
+テストはもちろんgreen.
+* fib(2) = fib(1) + fib(0) = 1
+人間は賢いからheadみたいに書いても納得するけど，computerはだめ．
+
+まずはテスト
+#+begin_src ruby
+[[0,0],[1,1],[2,1]].each do |pair|
+#+end_src
+なんですが，これはred.
+#+begin_example
+> ruby fibonacci_2.rb
+expeced:0
+result :0
+succeeded in assert_equal 0 should be expected.
+
+expeced:1
+result :1
+succeeded in assert_equal 1 should be expected.
+
+expeced:2
+result :1
+failed in assert_equal 1 should be expected.
+#+end_example
+
+条件分岐をもう少しいじって，
+#+begin_src ruby
+def fib(n)
+  if n==0
+    return 0
+  end
+  if n<=2
+    return 1
+  end
+end
+#+end_src
+これで動くはず... おやおや．
+実は，assert_equalは(expect, result)とうけとっています．
+: result = fib(2)
+: expected = 1
+だから，テストは配列変数pairの示数indexが逆で，
+#+begin_src ruby
+require './assert_equal'
+[[0,0],[1,1],[2,1]].each do |pair|
+  puts assert_equal(pair[1], fib(pair[0]))
+end
+#+end_src
+が正解．そうするとgreen.
+
+もう少し配列の受け取りを明示的にすると，
+: index, expected = pair
+と修正できて
+#+begin_src ruby
+require './assert_equal'
+[[0,0],[1,1],[2,1]].each do |index, expected|
+  puts assert_equal(expected, fib(index))
+end
+#+end_src
+の方がいいかも．
+
+* refactoring
+ここらへんまで来るとcodeがごちゃついてきた感じしません？
+しない？　それは頭のいい人．私には無理．
+えっと，rubocopという汚いcodeの取り締まり警官は10行以上のmethodがあると，
+烈火のごとく怒ります．
+
+治しようがないと思わずに削減を考えます．
+求めよさらば与えられん．そんなに無理しなくても，
+#+begin_src ruby
+def fib(n)
+  return 0 if n==0
+  return 1 if n<=2
+end
+#+end_src
+と2行に削減できます．この記法も英語的でしょ．
+それがrubyのいいところ．
+これだと何をしているのか一目瞭然でしょ．
+動いた部分を隠すというのを前回やりましたが，
+こっちの方がスマートです．
+こういうのをrefactoring(因数分解をもう一度)っていいます．
+
+* fib(3) = 2 = fib(2) + fib(1) 
+次はn = 3. テストは，
+: [[0,0],[1,1],[2,1],[3,2]].each do |index, expected|
+です．sourceは
+#+begin_src ruby
+def fib(n)
+  return 0  if n==0
+  return 1  if n<=2
+  return 2
+end
+#+end_src
+え．．．としてもいいんですよ．
+それがtddです．まずはgreenにする．
+
+そのあとでcodeを修正します．return 2の意味を考えると
+: return 1+1
+ですよね．さらには
+: return fib(2) + fib(1)
+というのも気がつくはず．
+そうするとcodeは
+#+begin_src ruby
+def fib(n)
+  return 0  if n==0
+  return 1  if n<=2
+  return fib(2) + fib(1)
+end
+#+end_src
+です．これで通るのが不思議かもしれませんが，とおりますし，意味も
+okです．
+
+* fib(4) = fib(3) + fib(2) = 2 + 1 = 3
+次は4. 期待値は3ですね．
+: [[0,0],[1,1],[2,1],[3,2],[4,3]].each do |index, expected|
+としましょう．テストはもちろんredです．
+最後のreturnを定義通り
+: fib(n) = fib(n-1) + fib(n-2)
+と修正しましょう．
+
+そうするとあら不思議．通ります．
+
+そのさき1,1,2,3,5,8,13,21ももちろん．
+
+ただ一つ抜けているのは，
+: fib(2) = fib(1) + fib(0) = 1 + 0
+なんで，fibのなかの条件分岐はもう少し狭められて，
+:   return 1  if n == 1
+で十分ということがわかります．
+
+そうすると最終形は，
+#+begin_src ruby
+def fib(n)
+  return 0 if n==0
+  return 1 if n==1
+  return fib(n-1) + fib(n-2)
+end
+
+require './assert_equal'
+[[0,0],[1,1],[2,1],[3,2],[4,3],
+[5,5],[6,8],[7,13],[8,21]].each do |index, expected|
+  puts assert_equal(expected, fib(index))
+end
+#+end_src
+です．
+
+うーーーん．こんなに綺麗にFibonacciを説明できるなんて．TDD万歳!!
+「TDD死すとも，テスティングは死せず」
+"TDD is dead.  Long live tesing." by David Heinemeier Hansson
+ってのもありますが．．．
+
