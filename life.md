@@ -1,6 +1,6 @@
 nakahori's life:
-![nakahori_total.png](png/nakahori_total.png)
-![nakahori_lastweekbefore.png](png/nakahori_lastweekbefore.png)
-![nakahori_lastweek.png](png/nakahori_lastweek.png)
-![nakahori_3weekago.png](png/nakahori_3weekago.png)
-![nakahori.png](png/nakahori.png)
+![nakahori_0_total.png](png/nakahori_0_total.png)
+![nakahori_1.png](png/nakahori_1.png)
+![nakahori_1_2.png](png/nakahori_1_2.png)
+![nakahori_1_3.png](png/nakahori_1_3.png)
+![nakahori_1_4.png](png/nakahori_1_4.png)
