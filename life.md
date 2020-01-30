@@ -1,3 +1,3 @@
-nakahori's:
-![png](./png/nakahori2_total.png)
-![png](./png/nakahori2.png)
+nakahori's life:
+![nakahori_total.png](png/nakahori_total.png)
+![nakahori.png](png/nakahori.png)
