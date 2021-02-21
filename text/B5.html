@@ -1,0 +1,1581 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="ja">
+<head>
+ <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+ <link rel=index href="index.html">
+ <title>B5 動的割当て</title>
+</head>
+
+<body>
+
+<hr>
+
+<p align="right"><b>プログラミング実習III (2019) 課題</b></p>
+<center>
+<h2>[B5] 動的割当て</h2>
+</center>
+
+<hr>
+
+<!--font color="red">【訂正】</font>
+<br>2017-11-01: 課題 (5-8) (3) 関数 istack_pop の型が間違っていたのを修正
+<hr-->
+
+<br>
+<ul>
+<p>
+<font color="brown">まず最初に, 
+教科書 pp. 133〜135 の「3.4 動的メモリ領域の確保」を読み, 
+動的割当て (動的メモリ確保) の概念を把握せよ. 
+</font>
+<p>
+</ul>
+
+<br>
+<p>
+<big><strong>1. 配列の動的割当て</strong></big>
+
+<ul>
+ <p>
+ <b>例題 (5-1)</b><br>
+ 次のような 2 つの関数をファイル create_array.c に作成し, 
+ 下記の main プログラムとリンクして動作確認せよ. 
+ <ul>
+  <li> int* create_iarray_n_d(int n, int d)
+  <br> サイズが n の int 型配列のメモリを割り当て, 
+  その 0 〜 n-1 要素に d を代入して返す. 
+  <p>
+  <li> double* create_darray_n_d(int n, double d)
+  <br> サイズが n の double 型配列のメモリを割り当て, 
+  その 0 〜 n-1 要素に d を代入して返す. 
+
+  <p> main プログラム
+  <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int* create_iarray_n_d(int n, int d);
+double* create_darray_n_d(int n, double d);
+
+#define NI 6
+#define ND 8
+
+
+int main(void)
+{
+  int *a = NULL;
+  double *b = NULL;
+  int i;
+
+  a = create_iarray_n_d(NI, 23); <font color="brown">/* 呼び出し */</font>
+  for (i=0; i&lt;NI; i++) { <font color="brown">/* 表示してみる */</font>
+    printf(" %d", a[i]);
+  }
+  printf("\n");
+  free(a); <font color="brown">/* 解放を忘れないこと */</font>
+  a = NULL; <font color="brown">/* free した後に NULL を代入する習慣をつける */</font>
+
+  b = create_darray_n_d(ND, 3.14); <font color="brown">/* 呼び出し */</font>
+  for (i=0; i&lt;ND; i++) { <font color="brown">/* 表示してみる */</font>
+    printf(" %f", b[i]);
+  }
+  printf("\n");
+  free(b); <font color="brown">/* 解放を忘れないこと */</font>
+  b = NULL; <font color="brown">/* free した後に NULL を代入する習慣をつける */</font>
+
+  return 0;
+}
+</pre></td></tr></table><p>
+  </ul>
+
+  <p> 実行結果
+  <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+ 23 23 23 23 23 23
+ 3.140000 3.140000 3.140000 3.140000 3.140000 3.140000 3.140000 3.140000
+</pre></td></tr></table><p>
+  </ul>
+ </ul>
+
+ <a name="malloc修正">
+ <p> 2つの関数は, 
+ <font color="brown">malloc</font> 関数を用いて次のように書ける. 
+ malloc の書き方をマスターせよ. 
+ 割り当てた配列の使い方は, 普通の配列と全く同じである. 
+ <ul>
+ <p>
+ <strong>malloc のキャストはあってもなくても良い. 下記いずれの書き方も可である.</strong>
+ <ul>
+  <font color="brown">  
+  <li>a = (int *) malloc(sizeof(int)*n);</li>
+  <li>a = malloc(sizeof(int)*n);</li>
+  (int *a; と宣言されている場合)
+  </font>
+ </ul>
+ </p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td><tt>create_array.c</tt></td></tr><tr><td><pre>
+#include &lt;stdio.h&gt
+#include &lt;<font color="brown">stdlib.h</font>&gt;  <font color="brown">/* malloc と exit を使うのに必要 */</font>
+
+
+int* create_iarray_n_d(int n, int d)
+{
+   int *a = NULL;  <font color="brown">/* 配列の先頭要素を指すポインタの宣言 */</font>
+   int i;
+
+   <font color="brown">a = (int *) malloc(sizeof(int)*n);</font>  <font color="brown">/* 動的割当て; 書き方は覚える */</font>
+   if (a==NULL) {   <font color="brown">/* malloc が失敗すると NULL が返るので, エラー処理 */</font>
+     fprintf(stderr, "a のmalloc が失敗\n");
+     exit(1); 
+   }
+
+   for (i=0; i&lt;n; i++) { a[i] = d; }   <font color="brown">/* 値のセット */</font>
+ 
+   return a;
+}
+
+
+double* create_darray_n_d(int n, double d)
+{
+   double *x = NULL;
+   int i;
+
+   x = (<font color="brown">double *</font>) malloc(sizeof(<font color="brown">double</font>)*n);
+   if (x==NULL) {
+     fprintf(stderr, "x の malloc が失敗\n");
+     exit(1); 
+   }
+
+   for (i=0; i&lt;n; i++) { x[i] = d; }   <font color="brown">/* 値のセット */</font>
+
+   return x;
+}
+</pre></td></tr></table><p>
+ </ul>
+
+
+ <p>
+ <b>課題 (5-1)</b><br>
+ <!--referred-->
+ <!--submit array_scan.c-->
+ 次の処理を行う関数 int* new_array_scan(int *pn) を作成せよ. 
+ <p>
+ <ol>
+  <li> 標準入力からまず整数 n (これが読み込むデータの数を表わす) を読み込む. 
+  <li> サイズ n の int 型配列を割り当てる. 
+  <li> n 個の整数を標準入力からその配列に読み込む. 
+  <li> *pn に n をセットする. 
+  <li> その配列の先頭要素へのポインタを返す. 
+ </ol>
+ <p>
+ この関数をファイル array_scan.c に格納せよ. 
+ <br> 下記の main プログラムとリンクして動作確認せよ. 
+ <br> <font color="brown">☆必ず malloc を使用すること. 
+ (通常のサイズが固定の配列や, C99の可変配列を用いてはならない.)</font>
+ <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int* new_array_scan(int *pn);
+
+int main(void)
+{
+  int *a = NULL;
+  int i, n;
+
+  a = new_array_scan(&n);
+
+  for (i=0; i&lt;n; i++) {
+    printf(" %d", a[i]);
+  }
+  printf("\n");
+
+  free(a);
+  a = NULL;
+
+  return 0;
+}
+</pre></td></tr></table><p>
+
+ <p> 入出力の確認
+
+</pre></td></tr></table><p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td>in.txt<br><font color="grey">最後の99は読まれない</font></td><td>exp.txt</td></tr>
+<tr valign="top">
+<td><pre>
+8
+11
+22
+33
+44
+55
+66
+77
+88
+99
+</pre></td>
+<td><pre>
+ 11 22 33 44 55 66 77 88
+</pre></td>
+</tr></table><p>
+ </ul>
+
+ <p>
+ <b>課題 (5-2)</b><br>
+ <!--submit distr.c-->
+ 次の手順でファイルから読み込んだ数値の出現回数をカウントするプログラム
+ distr.c を作成せよ. 
+ <p>
+ <ol>
+  <li> <!--refers-->課題 (5-1)<!----> の new_array_scan を使って, 
+  標準入力から数値を読み取った配列を取得する. 
+  <li> 配列中のデータの最大値 max と最小値 min を求める. 
+  <li> サイズが max-min+1 の int 型配列を malloc により割り当て, 
+  この配列を使ってデータの出現回数を数える. 
+  (ヒント: データ i の出現回数を第 i-min 要素にカウントする. 
+  このカウント用配列の初期化を忘れないよう注意.)
+  <li> 最後に, 出現回数が 1 以上のものだけを表示する. 
+  表示形式は, 下記の動作確認用入出力に合わせよ. 
+ </ol>
+ <p>
+ <!--refers-->課題 (5-1)<!----> の array_scan.c とリンクして動作確認せよ. 
+ <br><font color="brown">☆ 必ず new_array_scan を用いること. 
+ また, 必ずサイズ max-min+1 の配列を malloc で割り当てて用いること. </font>
+ <ul>
+ 次の入出力を確認せよ. 
+</pre></td></tr></table><p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td>in.txt</font></td><td>exp.txt</td></tr>
+<tr valign="top">
+<td><pre>
+5
+1
+1
+3
+3
+4
+</pre></td>
+<td><pre>
+1: 2
+3: 2
+4: 1
+</pre></td>
+</tr>
+<tr valign="top">
+<tr valign="top">
+<td><pre>
+5
+100
+200
+300
+200
+100
+</pre></td>
+<td><pre>
+100: 2
+200: 2
+300: 1
+</pre></td>
+</tr>
+<td><pre>
+2
+2147483640
+2147483641
+</pre></td>
+<td><pre>
+2147483640: 1
+2147483641: 1
+</pre></td>
+</tr>
+</table><p>
+ </ul>
+</ul>
+
+<br>
+<p>
+<big><strong>2. 文字列 (文字配列) の動的割当て</strong></big>
+
+<ul>
+
+ <p>
+ <b>例題 (5-2)</b><br>
+ 文字列のコピーを作って返す関数 char* strclone(char[ ] s) を作成せよ. 
+ この関数は, 文字配列 s に格納された文字列をちょうど格納できるサイズ
+ (下図参照) の文字配列を動的に割り当て, 
+ そこに s の文字列をコピーして, その文字配列の先頭要素へのポインタを返す. 
+ <ul>
+  <ul>
+
+<table border=0>
+ <tr>
+  <td>s[10]　</td>
+  <td>
+	<table border=1 cellpadding=3 cellspacing=0>
+	 <tr>
+		<td>&nbsp;'a'&nbsp;</td>
+		<td>&nbsp;'b'&nbsp;</td>
+		<td>&nbsp;'c'&nbsp;</td>
+		<td> '\0' </td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+	 </tr>
+	</table>
+  </td>
+ </tr>
+ <tr>
+  <td>strclone(s)　</td>
+  <td>
+	<table border=1 cellpadding=3 cellspacing=0>
+	 <tr>
+		<td>&nbsp;'a'&nbsp;</td>
+		<td>&nbsp;'b'&nbsp;</td>
+		<td>&nbsp;'c'&nbsp;</td>
+		<td> '\0' </td>
+	 </tr>
+	</table>
+  </td>
+ </tr>
+ </table>
+  </ul>
+
+  <p>
+  次の main プログラムとリンクして動作を確認せよ. 
+  <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#define SLEN 126
+#define SFMT "%126s"
+
+char *strclone(char s[]); 
+
+int main(void)
+{
+   char s[SLEN+1];
+   char *s2 = NULL;
+
+   for (;;) {
+      fprintf(stderr, "s = ");
+      if (scanf(SFMT,s)==EOF) { break; }
+      s2 = strclone(s);
+      printf("s2 = %s\n",s2);
+      free(s2);
+      s2 = NULL;
+   }
+
+   return 0;
+}
+</pre></td></tr></table><p>
+  </ul>
+  <p>
+  プログラムは次の通り. 
+
+  <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+char *strclone(char s[])
+{
+   char *clone = NULL;
+   int i;
+
+   /* s の長さ (strlen(s)) プラス 1 の文字配列を割り当てる */
+   clone = (char *) malloc(sizeof(char)*(strlen(s)+1));
+
+   /* コピー */
+   strcpy(clone,s);
+   <font color="grey">/****
+   ちなみに strcpy の中では, 次の処理が行われている
+   for (i=0; s[i]!='\0'; i++) {
+     clone[i] = s[i];
+   }
+   clone[i] = '\0';
+   ***/</font>
+
+   return clone;
+}
+</pre></td></tr></table><p>
+  </ul>
+ </ul>
+
+ <p>
+ <b>課題 (5-3)</b><br>
+ <!--submit strdouble.c-->
+ 文字配列 s に格納された文字列の 2 
+ 倍の長さの文字列をちょうど格納できるサイズの文字配列を動的に割り当て, 
+ そこに s 中の文字列を 2 回繰り返したものをコピーし, 
+ その文字配列の先頭要素へのポインタを返す関数, 
+ char *strdouble(char s[ ]) を作成せよ. 
+ <ul>
+  <ul>
+
+<table border=0>
+ <tr>
+  <td>s[10]　</td>
+  <td>
+	<table border=1 cellpadding=3 cellspacing=0>
+	 <tr>
+		<td>&nbsp;'a'&nbsp;</td>
+		<td>&nbsp;'b'&nbsp;</td>
+		<td>&nbsp;'c'&nbsp;</td>
+		<td> '\0' </td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+		<td>　 　</td>
+	 </tr>
+	</table>
+  </td>
+ </tr>
+ <tr>
+  <td>strdouble(s)　</td>
+  <td>
+	<table border=1 cellpadding=3 cellspacing=0>
+	 <tr>
+		<td>&nbsp;'a'&nbsp;</td>
+		<td>&nbsp;'b'&nbsp;</td>
+		<td>&nbsp;'c'&nbsp;</td>
+		<td>&nbsp;'a'&nbsp;</td>
+		<td>&nbsp;'b'&nbsp;</td>
+		<td>&nbsp;'c'&nbsp;</td>
+		<td> '\0' </td>
+	 </tr>
+	</table>
+  </td>
+ </tr>
+ </table>
+ </ul>
+
+ <p>
+ <font color="brown">ただし, 
+ strdouble の中では strcpy と strcat を用いてはならない. 
+ </font>
+
+ <p>
+ この関数を strdouble.c というファイルに格納し, 
+ 次の main プログラムとリンクして動作確認せよ. 
+ <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#define SLEN 126
+#define SFMT "%126s"
+
+char *strdouble(char s[]); 
+
+int main(void)
+{
+   char s[SLEN+1];
+   char *s2 = NULL;
+
+   for (;;) {
+      fprintf(stderr, "s = ");
+      if (scanf(SFMT,s)==EOF) { break; }
+      s2 = strdouble(s);
+      printf("%s\n",s2);
+      free(s2);
+      s2 = NULL;
+   }
+
+   return 0;
+}
+</pre></td></tr></table><p>
+  </ul>
+  <p>
+  例えば次のような入出力が得られることを確認せよ. 
+
+  <ul>
+</pre></td></tr></table><p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td>in.txt</td><td>exp.txt</td></tr>
+<tr valign="top">
+<td><pre>
+abc
+1234567890
+</pre></td>
+<td><pre>
+abcabc
+12345678901234567890
+</pre></td>
+</tr></table><p>
+  </ul>
+ </ul>
+
+ <p>
+ <b>課題 (5-4)</b><br>
+ <!--submit lineshuffle.c-->
+ 標準入力から偶数行 (行数を <i>n</i> とする) の文字列を読み込み, 
+ 0行目, n/2行目, 1行目, (n/2)+1行目, 2行目, (n/2)+2行目, ... 
+ をこの順に標準出力に出力するプログラム lineshuffle.c を作成せよ. 
+ ただし, 先頭行を 0 行目とし, 入力は EOF で終了するものとする. 
+ 期待される入出力は例えば次の通りである. 
+ <ul>
+</pre></td></tr></table><p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td>入力</td><td>期待される出力</td></tr>
+<tr valign="top">
+<td><pre>
+0 AAL - Aalborg : Denmark Aalborg 
+1 AAR - Aarhus : Denmark Tirstrup 
+2 ABI - Abilene : TX : USA Municipal 
+3 ABJ - Abidjan : Cote D'ivoire Port Bouet 
+4 ABR - Aberdeen : SD : USA Aberdeen Regional Airport 
+5 ABZ - Aberdeen : Scotland : United Kingdom Dyce 
+6 AES - Aalesund : Norway Vigra 
+7 AHB - Abha : Saudi Arabia - Abha Airport 
+</pre></td>
+<td><pre>
+0 AAL - Aalborg : Denmark Aalborg 
+4 ABR - Aberdeen : SD : USA Aberdeen Regional Airport 
+1 AAR - Aarhus : Denmark Tirstrup 
+5 ABZ - Aberdeen : Scotland : United Kingdom Dyce 
+2 ABI - Abilene : TX : USA Municipal 
+6 AES - Aalesund : Norway Vigra 
+3 ABJ - Abidjan : Cote D'ivoire Port Bouet 
+7 AHB - Abha : Saudi Arabia - Abha Airport 
+</pre></td>
+</tr></table><p>
+ </ul>
+
+ <p> 行の読み込みには fgets を用いよ. 使用例として, 
+ 標準入力から複数行 (EOFで終了) の文字列を読み込みんで, 
+ それをそのまま標準出力に出力するプログラムを次に示す. 
+ fgets(s, LINELEN, stdin) は, 
+ 標準入力 (stdin) から最大長 LINELEN の文字列を s に読み込む. 
+ 入力がなくなった場合には (EOF ではなく) NULL を返す. 
+ なお, fgets で読み込んだ文字列には, 最後に改行文字 '\n' が含まれることに注意せよ. 
+ このため, プログラムの９行目 printf の書式中に '\n' 
+ がなくても出力が改行される. 
+
+ <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+
+#define LINELEN 128
+
+int main(void)
+{
+   char s[LINELEN+1];
+   while (fgets(s, LINELEN, stdin) != NULL) {
+     printf("%s", s);
+   }
+   return 0;
+}
+</pre></td></tr></table><p>
+ </ul>
+
+ <p>
+ 読み込んだデータは, 下図のようなデータ構造で記憶せよ. 
+ line は char 型へのポインタの配列である. 
+ (line は malloc で割り当てるのではなく, 通常の配列として宣言して良い. 
+ サイズは適当な大きさに設定し, 
+ 行数がサイズを超過した場合にはエラーメッセージを出すようにせよ). 
+ 1行のデータ (文字列) を読み込む毎に, 
+ そのデータをちょうど格納できるサイズの文字配列を割り当ててそこに読み込んだ文字列データをコピーし, 
+ その文字配列の先頭を指すポインタを line[0], line[1], …, line[n-1] に格納する
+  (n-1 は行数). 
+ その後に, line[0], line[4], line[1], line[5], …, の順に出力すればよい. 
+
+ <ul>
+ <img src="fig-linereverse.pptx.jpg" width="250"></img>
+ </ul>
+ <p>
+ 最後に全ての文字列と line の記憶領域を free するのを忘れないようにせよ. 
+</ul>
+
+
+<br>
+<p>
+<big><strong>3. 構造体の動的割当て</strong></big>
+
+<ul>
+ <p>
+ <b>例題 (5-3)</b><br>
+ <!--referred-->
+ 次のように宣言された構造体型 pref_t のメモリ領域を 3 つ動的に割り当て, 
+ そのポインタを a, b, c にセットせよ. 
+ 次に, *a, *b, *c それぞれに適当な名前, 面積, 人口を代入し, 
+ それらを出力せよ. 
+
+ <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#define NAMELEN 15
+
+typedef struct {
+  char name[NAMELEN+1];  /* 県名 */
+  double area;           /* 面積 (km2)*/
+  int population;        /* 人口 (人) */
+} pref_t;
+</pre></td></tr></table><p>
+ </ul>
+
+ プログラムは次のようになる. 
+ <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+#define NAMELEN 15
+
+typedef struct {
+  char name[NAMELEN+1];  /* 県名 */
+  double area;           /* 面積 (km2)*/
+  int population;        /* 人口 (人) */
+} pref_t;
+
+int main(void)
+{
+   /* 構造体へのポインタを格納する変数 */
+   pref_t *a = NULL;
+   pref_t *b = NULL;
+   pref_t *c = NULL;
+
+   /* 動的割当て */
+   a = (pref_t *) malloc(sizeof(pref_t));
+   b = (pref_t *) malloc(sizeof(pref_t));
+   c = (pref_t *) malloc(sizeof(pref_t));
+
+   /* 値の代入 */
+   strncpy(a-&gt;name, "Tokyo", NAMELEN);
+   a-&gt;area = 2187.65;
+   a-&gt;population = 12988797;
+   strncpy(b-&gt;name, "Osaka", NAMELEN);
+   b-&gt;area = 1898.01;
+   b-&gt;population = 8840372;
+   strncpy(c-&gt;name, "Hyogo", NAMELEN);
+   c-&gt;area = 8395.89;
+   c-&gt;population = 5599359;
+
+   /* 出力 */
+   printf("%-10s %9.2f %9d\n", a-&gt;name, a-&gt;area, a-&gt;population);
+   printf("%-10s %9.2f %9d\n", b-&gt;name, b-&gt;area, b-&gt;population);
+   printf("%-10s %9.2f %9d\n", c-&gt;name, c-&gt;area, c-&gt;population);
+
+   /* 解放 */
+   free(a);
+   free(b);
+   free(c);
+   a = NULL;
+   b = NULL;
+   c = NULL;
+
+   return 0;
+}
+</pre></td></tr></table><p>
+ </ul>
+
+ <p>
+ <b>課題 (5-5)</b><br>
+ <!--referred-->
+ <!--submit pref.c, pref.h-->
+ <!--refers-->例題 (5-3)<!----> のプログラムを次のように書き換えよ. 
+ <ol>
+  <p>
+  <li> 動的割当てと値の代入の処理を一つの関数
+  pref_t *pref_new(char *name, double area, int population) として独立させる. 
+  pref_new は, pref_t 型の変数を動的に割り当て, 
+  その変数に name, area, population を代入し, 
+  その変数へのポインタを返す. 
+  <p>
+  <li> 出力の処理を一つの関数 void pref_print(pref_t* p) として独立させよ. 
+ </ol>
+ <p>
+ 2つの関数を pref.c に格納し, 次の pref1main.c とリンクして実行し, 
+ 下記の出力が得られることを確認せよ. 
+ 必要な pref.h も作成して提出すること. 
+ <ul>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td><tt>pref1main.c</tt></td></tr><tr><td><pre>
+#include &lt;stdlib.h&gt;
+#include "pref.h"
+
+int main(void)
+{
+   pref_t *a = NULL;
+   pref_t *b = NULL;
+   pref_t *c = NULL;
+
+   a = pref_new("Tokyo", 2187.65, 12988797);
+   b = pref_new("Osaka", 1898.01,  8840372);
+   c = pref_new("Hyogo", 8395.89,  5599359);
+
+   pref_print(a);
+   pref_print(b);
+   pref_print(c);
+
+   free(a);
+   free(b);
+   free(c);
+   a = NULL;
+   b = NULL;
+   c = NULL;
+
+   return 0;
+}
+</pre></td></tr></table><p>
+ 期待される出力
+  <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+Tokyo        2187.65  12988797
+Osaka        1898.01   8840372
+Hyogo        8395.89   5599359
+</pre></td></tr></table><p>
+  </ul>
+ </ul>
+
+ <p>
+ <b>課題 (5-6)</b><br>
+ <!--submit pref2main.c-->
+ <!--refers-->課題 (5-5)<!----> の pref1main.c を次のように書き換えよ (pref2main.c として提出せよ). 
+ <ol>
+  <p>
+  <li> 変数 a, b, c の代わりに, 配列 p[3] を用いよ. 
+  <p>
+  <li> 出力と領域の解放は for ループを用いて行うようにせよ. 
+ </ol>
+ <p>
+ pref.c とリンクして実行し, 
+ <!--refers-->課題 (5-5)<!----> と同じ出力が得られることを確認せよ. 
+
+ <p>
+ <b>課題 (5-7)</b><br>
+ <!--submit pref3main.c-->
+ 関数 pref_t *pref_new_scan() を作成し, pref.h, pref.c に追加せよ. 
+ <p>
+ pref_new_scan は, 
+ pref_t 型の変数を動的に割り当て, 
+ その変数に標準入力から name, area, population を読み込み, 
+ その変数へのポインタを返す. 
+ ただし, EOF を検出すると NULL を返すものとする. 
+
+ <p>
+ pref.c に作成した関数を用いて次のような処理を行うプログラム pref3main.c を作成せよ. 
+ <ol>
+  <p>
+  <li> 標準入力から県のデータを EOF になるまで読み込む. 
+  <p>
+  <li> 県のデータを読み込んだのと逆順に標準出力に出力する. 
+ </ol>
+ <p>
+ 県の数の上限は 47 としてよい (pref3main.c の中で #define せよ). 
+ <p>
+ 下記の入出力が得られることを確認せよ. 
+ <ul>
+</pre></td></tr></table><p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td>in.txt</td><td>exp.txt</td></tr>
+<tr valign="top">
+<td><pre>
+Tokyo        2187.65  12988797
+Osaka        1898.01   8840372
+Hyogo        8395.89   5599359
+Kyoto        4613.13   2631441
+Nara         3691.09   1400951
+Shiga        4017.36   1402132
+Wakayama     4726.29   1005710
+Mie          5777.22   1862575
+</pre></td>
+<td><pre>
+Mie          5777.22   1862575
+Wakayama     4726.29   1005710
+Shiga        4017.36   1402132
+Nara         3691.09   1400951
+Kyoto        4613.13   2631441
+Hyogo        8395.89   5599359
+Osaka        1898.01   8840372
+Tokyo        2187.65  12988797
+</pre></td>
+</tr></table><p>
+ </ul>
+
+ <p>
+ <b>課題 (5-8)</b><br>
+ <!--submit istack.c-->
+ <!--aux istack.h-->
+ 以下の指示に従い, 整数型のスタックを実装する次の関数群を作成し, 
+ istack.c に格納せよ. 
+ <ul>
+  <p>
+  整数型スタックを表現する構造体型 (istack_t), および各関数のプロトタイプ宣言は, 
+  次のヘッダファイル istack.h の通りである. 
+  <ul>
+<p><table border="1" cellpadding="5" cellspacing="0">
+<tr><td><tt>istack.h</tt></td></tr><tr><td><pre>
+typedef struct {
+  int size;  <font color="brown">/* スタックのサイズ (記憶できる最大のデータ数) */</font>
+  int sp;    <font color="brown">/* スタックポインタ (その時点で記憶しているデータ数) */</font>
+  int *data; <font color="brown">/* データを記憶する配列 (動的に割り当てる) の先頭要素へのポインタ */</font>
+} istack_t; 
+
+istack_t *istack_new(int size);  <font color="brown">/* サイズ size のスタックを新たに作り, そのポインタを返す */</font>
+void istack_delete(istack_t *s);  <font color="brown">/* スタックを破棄する */</font>
+int istack_empty(istack_t *s);  <font color="brown">/* スタックが空のとき 1 を, そうでないとき 0 を返す */</font>
+int istack_full(istack_t *s);  <font color="brown">/* スタックが満杯のとき 1 を, そうでないとき 0 を返す */</font>
+void istack_push(istack_t *s, int d);  <font color="brown">/* データ d をスタック末尾に追加する */</font>
+void istack_pop(istack_t *s, int *d);  <font color="brown">/* スタック末尾のデータを *d にセットし, スタックから削除する */</font>
+</pre></td></tr></table><p>
+  </ul>
+
+  <p> (1) 関数 istack_new と istack_delete を実装せよ. 
+  <ul>
+   <p>
+   <li> istack_t *istack_new(int size) は, 
+   サイズ size の整数型スタックを新たに作り, そのポインタを返す. 
+   <ol>
+    <p>
+    <li> まず, malloc により istack_t 型の変数を 1 つ割り当てる. 
+    malloc が失敗した場合 (malloc の返り値が NULL の場合) には, 
+    その旨を stderr に出力して終了する (exit(1) を呼ぶ) ようにせよ. 
+    <p>
+    <li> 構造体の size, sp, data を次の通り初期化する. 
+    <ul>
+     <li> size には引数 size の値を代入
+     <li> sp の初期値は 0
+     <li> サイズ size の整数型配列を割り当て, 
+     その先頭要素へのポインタを data にセットする. 
+     malloc が失敗した場合には, 
+    その旨を stderr に出力して終了する (exit(1) を呼ぶ) ようにせよ. 
+    </ul>
+   </ol>
+   <p>
+   <li> void istack_delete(istack_t *s) は s の指すスタック
+   (および s-&gt;data の指す配列) の動的領域を解放する. 
+   <ol>
+    <p>
+    <li> まず, s-&gt;data の指すデータを解放する. 
+    <p>
+    <li> 次に s の指すデータを解放する. 
+   </ol>
+   <p>
+   <li> 次の main とリンクして動作確認せよ. 
+   <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "istack.h"
+
+<font color="brown">// istack_new/istack_delete のテスト</font>
+
+#define ISTACK_SIZE 8
+
+void istack_print(istack_t *s)
+{
+  int i; 
+  printf("(size = %d, sp = %d, data = [", s-&gt;size, s-&gt;sp);
+  for (i=0; i&lt;s-&gt;sp; i++) {
+    printf(" %d", s-&gt;data[i]);
+  }
+  printf(" ])\n");
+}
+
+int main(void)
+{
+   istack_t *s = istack_new(ISTACK_SIZE);
+   istack_print(s);
+   istack_delete(s);
+   s = NULL;
+   return 0;
+}
+</pre></td></tr></table><p>
+    <p> 期待される実行結果
+    <ul>
+<p><table border="1" cellpadding="10" cellspacing="0"><tr><td><pre>
+(size = 8, sp = 0, data = [ ])
+</pre></td></tr></table><p>
+    </ul>
+   </ul>
+  </ul>
+
+  <p> (2) 関数 istack_push を実装せよ. 
+  <ul>
+   <p>
+   <li> void istack_push(istack_t *s, int d) は, 
+   データを記憶する配列の末尾に d を追加する. 
+   <font color="brown">ただし, スタックが満杯の場合には, 何も行わないものとする. </font>
+   <ol>
+    <p>
+    <li> 最初のデータが data[0] に, 次のデータが data[1] に, 
+   その次のデータが data[2] に, … と格納されるされるようにせよ. 
+   なお, sp はスタックが保持しているデータ数を表すことに留意せよ. 
+    <p>
+    <li> スタックが満杯 (記憶しているデータ数が size に等しい場合) には, 
+    何も行わないようにせよ. 
+   </ol>
+   <p>
+   <li> 次の main とリンクして動作確認せよ. 
+   <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "istack.h"
+
+// istack_push のテスト
+
+#define ISTACK_SIZE 4
+
+void istack_print(istack_t *s)
+{
+  int i; 
+  printf("(size = %d, sp = %d, data = [", s-&gt;size, s-&gt;sp);
+  for (i=0; i&lt;s-&gt;sp; i++) {
+    printf(" %d", s-&gt;data[i]);
+  }
+  printf(" ])\n");
+}
+
+int main(void)
+{
+   istack_t *s = istack_new(ISTACK_SIZE);
+   istack_print(s);
+   // (size = 4, sp = 0, data = [ ])
+
+   istack_push(s,5);
+   istack_push(s,6);
+   istack_print(s);
+   // (size = 4, sp = 2, data = [ 5 6 ])
+
+   istack_push(s,2);
+   istack_push(s,8);
+   istack_print(s);
+   // (size = 4, sp = 4, data = [ 5 6 2 8 ])
+
+   istack_push(s,3);
+   istack_push(s,3);
+   istack_print(s);
+   // (size = 4, sp = 4, data = [ 5 6 2 8 ])
+
+   istack_delete(s);
+   s = NULL;
+   return 0;
+}
+</pre></td></tr></table><p>
+    <p> 期待される実行結果
+    <ul>
+<p><table border="1" cellpadding="10" cellspacing="0"><tr><td><pre>
+(size = 4, sp = 0, data = [ ])
+(size = 4, sp = 2, data = [ 5 6 ])
+(size = 4, sp = 4, data = [ 5 6 2 8 ])
+(size = 4, sp = 4, data = [ 5 6 2 8 ])
+</pre></td></tr></table><p>
+    </ul>
+   </ul>
+  </ul>
+
+
+  <p> (3) 関数 istack_pop を実装せよ. 
+  <ul>
+   <p>
+   <li> void istack_pop(istack_t *s, int *d) は, 
+   スタックのデータを記憶する配列の末尾の要素の値を *d にセットし, 
+   スタックからそのデータを削除する. 
+   <font color="brown">ただし, スタックが空の場合には, データの削除は行わず, 
+   *d に 0 をセットするものとする. </font>
+   <p>
+   <li> 次の main とリンクして動作確認せよ. 
+   <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "istack.h"
+
+// istack_pop のテスト
+
+#define ISTACK_SIZE 4
+
+void istack_print(istack_t *s)
+{
+  int i; 
+  printf("(size = %d, sp = %d, data = [", s-&gt;size, s-&gt;sp);
+  for (i=0; i&lt;s-&gt;sp; i++) {
+    printf(" %d", s-&gt;data[i]);
+  }
+  printf(" ])\n");
+}
+
+int main(void)
+{
+   istack_t *s = istack_new(ISTACK_SIZE);
+   istack_push(s,5);
+   istack_push(s,6);
+   istack_push(s,2);
+   istack_push(s,8);
+   istack_print(s);
+   // (size = 4, sp = 4, data = [ 5 6 2 8 ])
+
+   int d; 
+   istack_pop(s,&d);
+   printf("d = %d\n", d); 
+   // d = 8
+   istack_print(s);
+   // (size = 4, sp = 3, data = [ 5 6 2 ])
+
+   istack_pop(s,&d);
+   printf("d = %d\n", d); 
+   // d = 2
+   istack_pop(s,&d);
+   printf("d = %d\n", d); 
+   // d = 6
+   istack_pop(s,&d);
+   printf("d = %d\n", d); 
+   // d = 5
+   istack_print(s);
+   // (size = 4, sp = 0, data = [ ])
+
+   istack_pop(s,&d);
+   printf("d = %d\n", d); 
+   // d = 0
+   istack_print(s);
+   // (size = 4, sp = 0, data = [ ])
+
+   istack_delete(s);
+   s = NULL;
+   return 0;
+}
+</pre></td></tr></table><p>
+    <p> 期待される実行結果
+    <ul>
+<p><table border="1" cellpadding="10" cellspacing="0"><tr><td><pre>
+(size = 4, sp = 4, data = [ 5 6 2 8 ])
+d = 8
+(size = 4, sp = 3, data = [ 5 6 2 ])
+d = 2
+d = 6
+d = 5
+(size = 4, sp = 0, data = [ ])
+d = 0
+(size = 4, sp = 0, data = [ ])
+</pre></td></tr></table><p>
+    </ul>
+   </ul>
+  </ul>
+
+  <p> (4) 関数 istack_empty と istack_full を実装せよ. 
+  <ul>
+   <p>
+   <li> int istack_empty(istack_t *s) は, 
+   スタックが空のとき 1 を, そうでないとき 0 を返す. 
+   <p>
+   <li> int istack_full(istack_t *s) は, 
+   スタックが満杯のとき 1 を, そうでないとき 0 を返す. 
+   <p>
+   <li> 次の main とリンクして動作確認せよ. 
+   <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "istack.h"
+
+// istack_empty/istack_full のテスト
+
+#define ISTACK_SIZE 4
+
+void istack_print(istack_t *s)
+{
+  int i; 
+  printf("(size = %d, sp = %d, data = [", s-&gt;size, s-&gt;sp);
+  for (i=0; i&lt;s-&gt;sp; i++) {
+    printf(" %d", s-&gt;data[i]);
+  }
+  printf(" ])\n");
+}
+
+int main(void)
+{
+   istack_t *s = istack_new(ISTACK_SIZE);
+   istack_print(s);
+   // (size = 4, sp = 0, data = [ ])
+   printf("empty = %d, full = %d\n", istack_empty(s), istack_full(s)); 
+   // empty = 1, full = 0
+
+   istack_push(s,5);
+   istack_push(s,6);
+   istack_print(s);
+   // (size = 4, sp = 2, data = [ 5 6 ])
+   printf("empty = %d, full = %d\n", istack_empty(s), istack_full(s)); 
+   // empty = 0, full = 0
+
+   istack_push(s,2);
+   istack_push(s,8);
+   istack_print(s);
+   // (size = 4, sp = 4, data = [ 5 6 2 8 ])
+   printf("empty = %d, full = %d\n", istack_empty(s), istack_full(s)); 
+   // empty = 0, full = 1
+
+   int d; 
+   istack_pop(s,&d);
+   istack_pop(s,&d);
+   istack_print(s);
+   // (size = 4, sp = 2, data = [ 5 6 ])
+   printf("empty = %d, full = %d\n", istack_empty(s), istack_full(s)); 
+   // empty = 0, full = 0
+
+   istack_pop(s,&d);
+   istack_pop(s,&d);
+   istack_print(s);
+   // (size = 4, sp = 0, data = [ ])
+   printf("empty = %d, full = %d\n", istack_empty(s), istack_full(s)); 
+   // empty = 1, full = 0
+
+   istack_delete(s);
+   s = NULL;
+   return 0;
+}
+</pre></td></tr></table><p>
+    <p> 期待される実行結果
+    <ul>
+<p><table border="1" cellpadding="10" cellspacing="0"><tr><td><pre>
+(size = 4, sp = 0, data = [ ])
+empty = 1, full = 0
+(size = 4, sp = 2, data = [ 5 6 ])
+empty = 0, full = 0
+(size = 4, sp = 4, data = [ 5 6 2 8 ])
+empty = 0, full = 1
+(size = 4, sp = 2, data = [ 5 6 ])
+empty = 0, full = 0
+(size = 4, sp = 0, data = [ ])
+empty = 1, full = 0
+</pre></td></tr></table><p>
+    </ul>
+   </ul>
+  </ul>
+
+  <p> (5) istack_push を改良し, size を拡張できるようにせよ. 
+  <ul>
+   <p>
+   <li> 満杯の istack に対して istack_push を呼び出した場合には, 
+   size を 2 倍にし, data の要素数も 2 倍になるように data の再割当てを行って, 
+   プッシュされたデータを収容できるようにせよ. 
+	 動的領域の再割り当ては, <font color="brown">realloc 関数</font>
+   (教科書 p. 135 参照) により行える. 
+   <p>
+   <li> 次の main とリンクして動作確認せよ. 
+   <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include "istack.h"
+
+// istacK_push の reallocate のテスト
+
+#define ISTACK_SIZE 4
+
+void istack_print(istack_t *s)
+{
+  int i; 
+  printf("(size = %d, sp = %d, data = [", s-&gt;size, s-&gt;sp);
+  for (i=0; i&lt;s-&gt;sp; i++) {
+    printf(" %d", s-&gt;data[i]);
+  }
+  printf(" ])\n");
+}
+
+int main(void)
+{
+   istack_t *s = istack_new(ISTACK_SIZE);
+   istack_push(s,5);
+   istack_push(s,6);
+   istack_push(s,2);
+   istack_push(s,8);
+   istack_print(s);
+   // (size = 4, sp = 4, data = [ 5 6 2 8 ])
+
+   istack_push(s,2);
+   istack_push(s,8);
+   istack_print(s);
+   // (size = 8, sp = 6, data = [ 5 6 2 8 2 8 ])
+
+   istack_delete(s);
+   s = NULL;
+   return 0;
+}
+</pre></td></tr></table><p>
+    <p> 期待される実行結果
+    <ul>
+<p><table border="1" cellpadding="10" cellspacing="0"><tr><td><pre>
+(size = 4, sp = 4, data = [ 5 6 2 8 ])
+(size = 8, sp = 6, data = [ 5 6 2 8 2 8 ])
+</pre></td></tr></table><p>
+    </ul>
+   </ul>
+  </ul>
+
+  <p> (6) 完成した istack.c を次のテストプログラム istacktest.c とリンクして実行し, 
+  期待値が出力されることを確認せよ. 
+  <ul>
+<p><table border="1" cellpadding="5" cellspacing="0">
+<tr><td><tt>istacktest.c</tt></td></tr><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include &lt;assert.h&gt;
+#include "istack.h"
+
+#define ISTACK_SIZE 4
+
+#define PRINT 1
+#define NO_PRINT 0
+
+
+void istack_print(istack_t *s)
+{
+  int i; 
+  assert(s!=NULL);
+  assert(s-&gt;data!=NULL);
+  printf("(size = %d, sp = %d, data = [", s-&gt;size, s-&gt;sp);
+  for (i=0; i&lt;s-&gt;sp; i++) {
+    printf(" %d", s-&gt;data[i]);
+  }
+  printf(" ])\n");
+}
+
+
+void repeat_istack_push(istack_t *s, int n, int do_print)
+/* push を n 回行うテスト */
+{
+  int i;
+  for (i=0; i&lt;n; i++) {
+    int d = i*i;
+    if (do_print) {
+       printf("E=%d, F=%d; ", istack_empty(s), istack_full(s));
+       printf(" push(s,%d); ", d);
+    }
+    istack_push(s,d);
+    if (do_print) {
+      istack_print(s);
+    }
+  }
+}
+
+
+void repeat_istack_pop(istack_t *s, int n, int do_print)
+/* pop を n 回行うテスト */
+{
+  int i;
+  for (i=0; i&lt;n; i++) {
+    if (do_print) {
+       printf("E=%d, F=%d; ", istack_empty(s), istack_full(s));
+    }
+    int d;
+    istack_pop(s,&d);
+    if (do_print) {
+       printf(" pop(s) = %d; ", d);
+      istack_print(s);
+    }
+  }
+}
+
+
+int main(void)
+{
+  istack_t *s, *s2;
+  int i, d;
+
+  s = istack_new(ISTACK_SIZE);
+  repeat_istack_push(s, ISTACK_SIZE, PRINT);
+  repeat_istack_pop(s, ISTACK_SIZE/2, PRINT);
+  repeat_istack_push(s, ISTACK_SIZE/2, PRINT);
+  repeat_istack_pop(s, ISTACK_SIZE*3/2, PRINT);
+  repeat_istack_push(s, ISTACK_SIZE*3, PRINT);
+  repeat_istack_pop(s, ISTACK_SIZE, PRINT);
+  repeat_istack_push(s, ISTACK_SIZE*10, NO_PRINT);
+  repeat_istack_pop(s, ISTACK_SIZE/2, PRINT);
+  repeat_istack_pop(s, ISTACK_SIZE*10, NO_PRINT);
+  repeat_istack_push(s, ISTACK_SIZE/2, PRINT);
+  repeat_istack_pop(s, ISTACK_SIZE/2, PRINT);
+
+  s2 = istack_new(ISTACK_SIZE);
+  repeat_istack_push(s2, ISTACK_SIZE, PRINT);
+  repeat_istack_pop(s2, ISTACK_SIZE, PRINT);
+
+  istack_delete(s2);
+  istack_delete(s);
+
+  return 0;
+}
+</pre></td></tr></table><p>
+ </ul>
+ 期待される出力
+ <ul>
+<p><table border=1 cellpadding=10 cellspacing=0><tr><td><pre>
+E=1, F=0;  push(s,0); (size = 4, sp = 1, data = [ 0 ])
+E=0, F=0;  push(s,1); (size = 4, sp = 2, data = [ 0 1 ])
+E=0, F=0;  push(s,4); (size = 4, sp = 3, data = [ 0 1 4 ])
+E=0, F=0;  push(s,9); (size = 4, sp = 4, data = [ 0 1 4 9 ])
+E=0, F=1;  pop(s) = 9; (size = 4, sp = 3, data = [ 0 1 4 ])
+E=0, F=0;  pop(s) = 4; (size = 4, sp = 2, data = [ 0 1 ])
+E=0, F=0;  push(s,0); (size = 4, sp = 3, data = [ 0 1 0 ])
+E=0, F=0;  push(s,1); (size = 4, sp = 4, data = [ 0 1 0 1 ])
+E=0, F=1;  pop(s) = 1; (size = 4, sp = 3, data = [ 0 1 0 ])
+E=0, F=0;  pop(s) = 0; (size = 4, sp = 2, data = [ 0 1 ])
+E=0, F=0;  pop(s) = 1; (size = 4, sp = 1, data = [ 0 ])
+E=0, F=0;  pop(s) = 0; (size = 4, sp = 0, data = [ ])
+E=1, F=0;  pop(s) = 0; (size = 4, sp = 0, data = [ ])
+E=1, F=0;  pop(s) = 0; (size = 4, sp = 0, data = [ ])
+E=1, F=0;  push(s,0); (size = 4, sp = 1, data = [ 0 ])
+E=0, F=0;  push(s,1); (size = 4, sp = 2, data = [ 0 1 ])
+E=0, F=0;  push(s,4); (size = 4, sp = 3, data = [ 0 1 4 ])
+E=0, F=0;  push(s,9); (size = 4, sp = 4, data = [ 0 1 4 9 ])
+E=0, F=1;  push(s,16); (size = 8, sp = 5, data = [ 0 1 4 9 16 ])
+E=0, F=0;  push(s,25); (size = 8, sp = 6, data = [ 0 1 4 9 16 25 ])
+E=0, F=0;  push(s,36); (size = 8, sp = 7, data = [ 0 1 4 9 16 25 36 ])
+E=0, F=0;  push(s,49); (size = 8, sp = 8, data = [ 0 1 4 9 16 25 36 49 ])
+E=0, F=1;  push(s,64); (size = 16, sp = 9, data = [ 0 1 4 9 16 25 36 49 64 ])
+E=0, F=0;  push(s,81); (size = 16, sp = 10, data = [ 0 1 4 9 16 25 36 49 64 81 ])
+E=0, F=0;  push(s,100); (size = 16, sp = 11, data = [ 0 1 4 9 16 25 36 49 64 81 100 ])
+E=0, F=0;  push(s,121); (size = 16, sp = 12, data = [ 0 1 4 9 16 25 36 49 64 81 100 121 ])
+E=0, F=0;  pop(s) = 121; (size = 16, sp = 11, data = [ 0 1 4 9 16 25 36 49 64 81 100 ])
+E=0, F=0;  pop(s) = 100; (size = 16, sp = 10, data = [ 0 1 4 9 16 25 36 49 64 81 ])
+E=0, F=0;  pop(s) = 81; (size = 16, sp = 9, data = [ 0 1 4 9 16 25 36 49 64 ])
+E=0, F=0;  pop(s) = 64; (size = 16, sp = 8, data = [ 0 1 4 9 16 25 36 49 ])
+E=0, F=0;  pop(s) = 1521; (size = 64, sp = 47, data = [ 0 1 4 9 16 25 36 49 0 1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324 361 400 441 484 529 576 625 676 729 784 841 900 961 1024 1089 1156 1225 1296 1369 1444 ])
+E=0, F=0;  pop(s) = 1444; (size = 64, sp = 46, data = [ 0 1 4 9 16 25 36 49 0 1 4 9 16 25 36 49 64 81 100 121 144 169 196 225 256 289 324 361 400 441 484 529 576 625 676 729 784 841 900 961 1024 1089 1156 1225 1296 1369 ])
+E=0, F=0;  push(s,0); (size = 64, sp = 7, data = [ 0 1 4 9 16 25 0 ])
+E=0, F=0;  push(s,1); (size = 64, sp = 8, data = [ 0 1 4 9 16 25 0 1 ])
+E=0, F=0;  pop(s) = 1; (size = 64, sp = 7, data = [ 0 1 4 9 16 25 0 ])
+E=0, F=0;  pop(s) = 0; (size = 64, sp = 6, data = [ 0 1 4 9 16 25 ])
+E=1, F=0;  push(s,0); (size = 4, sp = 1, data = [ 0 ])
+E=0, F=0;  push(s,1); (size = 4, sp = 2, data = [ 0 1 ])
+E=0, F=0;  push(s,4); (size = 4, sp = 3, data = [ 0 1 4 ])
+E=0, F=0;  push(s,9); (size = 4, sp = 4, data = [ 0 1 4 9 ])
+E=0, F=1;  pop(s) = 9; (size = 4, sp = 3, data = [ 0 1 4 ])
+E=0, F=0;  pop(s) = 4; (size = 4, sp = 2, data = [ 0 1 ])
+E=0, F=0;  pop(s) = 1; (size = 4, sp = 1, data = [ 0 ])
+E=0, F=0;  pop(s) = 0; (size = 4, sp = 0, data = [ ])
+</pre></td></tr></table><p>
+  </ul>
+ </ul>
+
+</ul>
+
+
+<br>
+<p>
+<big><strong>4. オプション課題</strong></big>
+
+<ul>
+
+ <p>
+ <b>オプション課題 (5-1)</b><br>
+ <!--opt_submit matrixd.c-->
+ <!--aux matrixd.h-->
+ C言語では, n が変数のときにサイズ n×n の2次元配列を動的に割り当てるのが難しいので, 
+ その代替として, 
+ <ul>
+  <p><li> サイズ n*n の1次元配列を割り当て, 
+  <p><li> 2次元配列の [i][j] 要素へのアクセスを, 
+  1次元配列の [i*n+j] 要素へのアクセスに置き換える, 
+ </ul>
+ <p> という手法が用いられることがある. この方法に基づいて, 
+ B4 の<!--refers-->課題 (4-1)<!----> の matrix.c の動的割当て版 matrixd.c を作成せよ. 
+
+ <p> 次の 5 つの関数のみ作成せよ. 
+ <p>
+ <ul>
+  <li> double *matrixd_new(int n) … 
+  サイズ n*n の double 型 1 次元配列を割り当てて, 
+  その先頭要素へのポインタを返す. 
+  <li> void matrixd_delete(double *A)　… 
+  A の指す動的領域を解放する. 
+  <li> void matrixd_print(int n, double *A) … 
+  <!--refers-->課題 (4-1)<!----> (1) の matrix_print に相当するもの
+  <li> void matrixd_scan(int n, double *A) …
+  <!--refers-->課題 (4-1)<!----> (2) の matrix_scan に相当するもの
+  <li> void matrixd_sum(int n, double *A, double *B, double *Y) … 
+  <!--refers-->課題 (4-1)<!----> (3) の matrix_sum に相当するもの
+ </ul>
+ <p>
+ ヘッダファイル matrixd.h, テストプログラム matrixd3test.c, 
+ テストデータを以下に示す. 
+ <ul>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td><tt>matrixd.h</tt></td></tr><tr><td><pre>
+double *matrixd_new(int n);
+void matrixd_delete(double *A);
+void matrixd_print(int n, double *A);
+void matrixd_scan(int n, double *A);
+void matrixd_sum(int n, double *A, double *B, double *Y);
+</pre></td></tr></table><p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td><tt>matrixd3test.c</tt></td></tr><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include "matrixd.h"
+
+int main(void)
+{
+   int n;
+   double *A = NULL;
+   double *B = NULL;
+   double *Y = NULL;
+
+   fprintf(stderr, "n = ");
+   scanf("%d", &n);
+
+   A = matrixd_new(n);
+   B = matrixd_new(n);
+   Y = matrixd_new(n);
+
+   fprintf(stderr, "A\n");
+   matrixd_scan(n, A);
+   fprintf(stderr, "B\n");
+   matrixd_scan(n, B);
+
+   matrixd_sum(n, A, B, Y);
+
+   printf("A\n");
+   matrixd_print(n, A);
+   printf("B\n");
+   matrixd_print(n, B);
+   printf("Y\n");
+   matrixd_print(n, Y);
+
+   matrixd_delete(Y);
+   matrixd_delete(B);
+   matrixd_delete(A);
+   Y = NULL;
+   B = NULL;
+   A = NULL;
+
+   return 0;
+}
+</pre></td></tr></table><p>
+
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td>in.txt</td><td>exp.txt</td></tr>
+<tr valign="top">
+<td><pre>
+5
+
+3.25 9.42 7.34 0.12 5.98
+5.73 7.11 8.93 6.32 7.12
+8.23 5.44 3.12 0.29 4.23
+5.42 6.22 2.93 4.32 9.22
+7.13 1.36 9.34 4.21 4.31
+
+1.23 0.34 9.24 6.24 8.88
+2.59 0.13 3.19 7.36 6.35
+7.12 9.44 3.19 0.25 8.41
+3.42 9.43 4.23 7.99 8.43
+5.24 0.23 2.44 9.34 6.87
+</pre></td><td><pre>
+A
+   3.25000   9.42000   7.34000   0.12000   5.98000
+   5.73000   7.11000   8.93000   6.32000   7.12000
+   8.23000   5.44000   3.12000   0.29000   4.23000
+   5.42000   6.22000   2.93000   4.32000   9.22000
+   7.13000   1.36000   9.34000   4.21000   4.31000
+B
+   1.23000   0.34000   9.24000   6.24000   8.88000
+   2.59000   0.13000   3.19000   7.36000   6.35000
+   7.12000   9.44000   3.19000   0.25000   8.41000
+   3.42000   9.43000   4.23000   7.99000   8.43000
+   5.24000   0.23000   2.44000   9.34000   6.87000
+Y
+   4.48000   9.76000  16.58000   6.36000  14.86000
+   8.32000   7.24000  12.12000  13.68000  13.47000
+  15.35000  14.88000   6.31000   0.54000  12.64000
+   8.84000  15.65000   7.16000  12.31000  17.65000
+  12.37000   1.59000  11.78000  13.55000  11.18000</pre></td>
+</tr></table><p>
+
+ </ul>
+
+ <p>
+ <b>オプション課題 (5-2)</b><br>
+ <!--opt_submit matrixdd.c-->
+ <!--aux matrixdd.h-->
+ 2次元配列を動的に割り当てる別の方法として, 
+ 下記のように 1 次元配列を指すポインタへの配列を用いる方法がある. 
+ <ul>
+  <img src="fig-matrixdd.pptx.jpg" width="350"/>
+ </ul>
+ <p> 例えば, 上図で A[1] の指す 1 次元配列の第 2 要素へのアクセスは, 
+ A[1][2] と書くことができる. 
+ B4 の<!--refers-->課題 (4-1)<!----> の matrix.c のこの方法に基づく動的割当て版 matrixdd.c を作成せよ. 
+
+ <p> オプション課題 (5-1) の 5 つの関数に相当する下記の関数を実装せよ. 
+ <!--referred-->
+ <p>
+ <ul>
+  <li> double **matrixdd_new(int n)
+  <li> void matrixdd_delete(int n, double **A)
+  <li> void matrixdd_print(int n, double **A)
+  <li> void matrixdd_scan(int n, double **A)
+  <li> void matrixdd_sum(int n, double **A, double **B, double **Y)
+ </ul>
+ <p>
+ 関数 matrixdd_delete では, 
+ データの配列を全て解放した後にポインタの配列を解放する必要があることに留意せよ. 
+ <p>
+ ヘッダファイル matrixdd.h, テストプログラム matrixdd3test.c を以下に示す. 
+ テストデータは<!--refers-->オプション課題 (5-1)<!----> と同じである. 
+ <ul>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td><tt>matrixdd.h</tt></td></tr><tr><td><pre>
+double **matrixdd_new(int n);
+void matrixdd_delete(int n, double **A);
+void matrixdd_print(int n, double **A);
+void matrixdd_scan(int n, double **A);
+void matrixdd_sum(int n, double **A, double **B, double **Y);
+</pre></td></tr></table><p>
+<p><table border=1 cellpadding=5 cellspacing=0>
+<tr><td><tt>matrixdd3test.c</tt></td></tr><tr><td><pre>
+#include &lt;stdio.h&gt;
+#include "matrixdd.h"
+
+int main(void)
+{
+   int n;
+   double **A = NULL;
+   double **B = NULL;
+   double **Y = NULL;
+
+   fprintf(stderr, "n = ");
+   scanf("%d", &n);
+
+   A = matrixdd_new(n);
+   B = matrixdd_new(n);
+   Y = matrixdd_new(n);
+
+   fprintf(stderr, "A\n");
+   matrixdd_scan(n, A);
+   fprintf(stderr, "B\n");
+   matrixdd_scan(n, B);
+
+   matrixdd_sum(n, A, B, Y);
+
+   printf("A\n");
+   matrixdd_print(n, A);
+   printf("B\n");
+   matrixdd_print(n, B);
+   printf("Y\n");
+   matrixdd_print(n, Y);
+
+   matrixdd_delete(n, Y);
+   matrixdd_delete(n, B);
+   matrixdd_delete(n, A);
+   Y = NULL;
+   B = NULL;
+   A = NULL;
+
+   return 0;
+}
+</pre></td></tr></table><p>
+
+ </ul>
+</ul>
+
+
+
+<hr>
+</body>
+</html>
